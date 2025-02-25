@@ -1,0 +1,955 @@
+{
+	"info": {
+		"_postman_id": "4fcae305-bb37-41a6-94a0-f71e84c287fc",
+		"name": "ms-jurisia-security",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "21579592"
+	},
+	"item": [
+		{
+			"name": "Aplicaciones",
+			"item": [
+				{
+					"name": "Get All",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{ms-jurisia-security}}/v1/aplicacions/get-all",
+							"host": [
+								"{{ms-jurisia-security}}"
+							],
+							"path": [
+								"v1",
+								"aplicacions",
+								"get-all"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get By Id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{ms-jurisia-security}}/v1/aplicacions/:id",
+							"host": [
+								"{{ms-jurisia-security}}"
+							],
+							"path": [
+								"v1",
+								"aplicacions",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Cargos",
+			"item": [
+				{
+					"name": "Get All",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{ms-jurisia-security}}/v1/cargos/get-all",
+							"host": [
+								"{{ms-jurisia-security}}"
+							],
+							"path": [
+								"v1",
+								"cargos",
+								"get-all"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get List",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{ms-jurisia-security}}/v1/cargos?size=5&buscar=test&page=0",
+							"host": [
+								"{{ms-jurisia-security}}"
+							],
+							"path": [
+								"v1",
+								"cargos"
+							],
+							"query": [
+								{
+									"key": "size",
+									"value": "5"
+								},
+								{
+									"key": "buscar",
+									"value": "test"
+								},
+								{
+									"key": "page",
+									"value": "0"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get By Id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{ms-jurisia-security}}/v1/cargos/:id",
+							"host": [
+								"{{ms-jurisia-security}}"
+							],
+							"path": [
+								"v1",
+								"cargos",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"codigo\": \"cargo_2\",\r\n    \"nombre\": \"cargo 2 test\",\r\n    \"sigla\": \"C2T\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{ms-jurisia-security}}/v1/cargos",
+							"host": [
+								"{{ms-jurisia-security}}"
+							],
+							"path": [
+								"v1",
+								"cargos"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Edit",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": 2,\r\n    \"codigo\": \"cargo_2ed\",\r\n    \"nombre\": \"cargo 2 tested\",\r\n    \"sigla\": \"C2Ted\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{ms-jurisia-security}}/v1/cargos",
+							"host": [
+								"{{ms-jurisia-security}}"
+							],
+							"path": [
+								"v1",
+								"cargos"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{ms-jurisia-security}}/v1/cargos/:id",
+							"host": [
+								"{{ms-jurisia-security}}"
+							],
+							"path": [
+								"v1",
+								"cargos",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Activation",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "{{ms-jurisia-security}}/v1/cargos/activation/:id/:valor",
+							"host": [
+								"{{ms-jurisia-security}}"
+							],
+							"path": [
+								"v1",
+								"cargos",
+								"activation",
+								":id",
+								":valor"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "2"
+								},
+								{
+									"key": "valor",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Dependencias",
+			"item": [
+				{
+					"name": "Get All",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{ms-jurisia-security}}/v1/dependencias/get-all",
+							"host": [
+								"{{ms-jurisia-security}}"
+							],
+							"path": [
+								"v1",
+								"dependencias",
+								"get-all"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get List",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{ms-jurisia-security}}/v1/dependencias?size=5&buscar=test&page=0",
+							"host": [
+								"{{ms-jurisia-security}}"
+							],
+							"path": [
+								"v1",
+								"dependencias"
+							],
+							"query": [
+								{
+									"key": "size",
+									"value": "5"
+								},
+								{
+									"key": "buscar",
+									"value": "test"
+								},
+								{
+									"key": "page",
+									"value": "0"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get By Id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{ms-jurisia-security}}/v1/dependencias/:id",
+							"host": [
+								"{{ms-jurisia-security}}"
+							],
+							"path": [
+								"v1",
+								"dependencias",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"codigo\": \"dependencia_1\",\r\n    \"nombre\": \"Dependencia 1 test\",\r\n    \"sigla\": \"D1T\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{ms-jurisia-security}}/v1/dependencias",
+							"host": [
+								"{{ms-jurisia-security}}"
+							],
+							"path": [
+								"v1",
+								"dependencias"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Edit",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": 1,\r\n    \"codigo\": \"dependencia_1_ed\",\r\n    \"nombre\": \"Dependencia 1 test edit\",\r\n    \"sigla\": \"D1Ted\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{ms-jurisia-security}}/v1/dependencias",
+							"host": [
+								"{{ms-jurisia-security}}"
+							],
+							"path": [
+								"v1",
+								"dependencias"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{ms-jurisia-security}}/v1/dependencias/:id",
+							"host": [
+								"{{ms-jurisia-security}}"
+							],
+							"path": [
+								"v1",
+								"dependencias",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Activation",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "{{ms-jurisia-security}}/v1/dependencias/activation/:id/:valor",
+							"host": [
+								"{{ms-jurisia-security}}"
+							],
+							"path": [
+								"v1",
+								"dependencias",
+								"activation",
+								":id",
+								":valor"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								},
+								{
+									"key": "valor",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Logins",
+			"item": [
+				{
+					"name": "Get All",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{ms-jurisia-security}}/v1/logins/get-all",
+							"host": [
+								"{{ms-jurisia-security}}"
+							],
+							"path": [
+								"v1",
+								"logins",
+								"get-all"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get By Id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{ms-jurisia-security}}/v1/logins/:id",
+							"host": [
+								"{{ms-jurisia-security}}"
+							],
+							"path": [
+								"v1",
+								"logins",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Modulos",
+			"item": [
+				{
+					"name": "Get All",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{ms-jurisia-security}}/v1/modulos/get-all",
+							"host": [
+								"{{ms-jurisia-security}}"
+							],
+							"path": [
+								"v1",
+								"modulos",
+								"get-all"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get By Id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{ms-jurisia-security}}/v1/modulos/:id",
+							"host": [
+								"{{ms-jurisia-security}}"
+							],
+							"path": [
+								"v1",
+								"modulos",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Roles",
+			"item": [
+				{
+					"name": "Get All",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{ms-jurisia-security}}/v1/roles/get-all",
+							"host": [
+								"{{ms-jurisia-security}}"
+							],
+							"path": [
+								"v1",
+								"roles",
+								"get-all"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get By Id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{ms-jurisia-security}}/v1/roles/:id",
+							"host": [
+								"{{ms-jurisia-security}}"
+							],
+							"path": [
+								"v1",
+								"roles",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Tipo Users",
+			"item": [
+				{
+					"name": "Get All",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{ms-jurisia-security}}/v1/typeusers/get-all",
+							"host": [
+								"{{ms-jurisia-security}}"
+							],
+							"path": [
+								"v1",
+								"typeusers",
+								"get-all"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "Get All",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{ms-jurisia-security}}/v1/users/get-all",
+							"host": [
+								"{{ms-jurisia-security}}"
+							],
+							"path": [
+								"v1",
+								"users",
+								"get-all"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get List",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{ms-jurisia-security}}/v1/users?size=5&buscar=test&page=0&dependenciaId=0",
+							"host": [
+								"{{ms-jurisia-security}}"
+							],
+							"path": [
+								"v1",
+								"users"
+							],
+							"query": [
+								{
+									"key": "size",
+									"value": "5"
+								},
+								{
+									"key": "buscar",
+									"value": "test"
+								},
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "dependenciaId",
+									"value": "0"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get By Id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{ms-jurisia-security}}/v1/users/:id",
+							"host": [
+								"{{ms-jurisia-security}}"
+							],
+							"path": [
+								"v1",
+								"users",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"tipoDocumento\": 1,\r\n    \"documento\": \"47331640\",\r\n    \"apellidos\": \"Chavez Torres\",\r\n    \"nombres\": \"Cristian Fernando\",\r\n    \"dependencia\": {\r\n        \"id\": 2\r\n    },\r\n    \"cargo\": {\r\n        \"id\": 2\r\n    },\r\n    \"username\": \"user1\",\r\n    \"password\": \"123\",\r\n    \"email\": \"cristian_7_70@hotmail.com\",\r\n    \"tipoUser\": {\r\n        \"id\": 1\r\n    },\r\n    \"genero\": 1,\r\n    \"telefono\": \"944129804\",\r\n    \"direccion\": \"Huaraz\",\r\n    \"activo\": 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{ms-jurisia-security}}/v1/users",
+							"host": [
+								"{{ms-jurisia-security}}"
+							],
+							"path": [
+								"v1",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Edit",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": 1,\r\n    \"tipoDocumento\": 1,\r\n    \"documento\": \"47331640\",\r\n    \"apellidos\": \"Chavez Torres\",\r\n    \"nombres\": \"Cristian Fernando\",\r\n    \"dependencia\": {\r\n        \"id\": 2\r\n    },\r\n    \"cargo\": {\r\n        \"id\": 2\r\n    },\r\n    \"username\": \"user1\",\r\n    \"password\": \"123\",\r\n    \"email\": \"cristian_7_70@hotmail.com\",\r\n    \"tipoUser\": {\r\n        \"id\": 1\r\n    },\r\n    \"genero\": 1,\r\n    \"telefono\": \"944129804\",\r\n    \"direccion\": \"Huaraz\",\r\n    \"activo\": 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{ms-jurisia-security}}/v1/users",
+							"host": [
+								"{{ms-jurisia-security}}"
+							],
+							"path": [
+								"v1",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{ms-jurisia-security}}/v1/users/:id",
+							"host": [
+								"{{ms-jurisia-security}}"
+							],
+							"path": [
+								"v1",
+								"users",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Activation",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "{{ms-jurisia-security}}/v1/dependencias/activation/:id/:valor",
+							"host": [
+								"{{ms-jurisia-security}}"
+							],
+							"path": [
+								"v1",
+								"dependencias",
+								"activation",
+								":id",
+								":valor"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								},
+								{
+									"key": "valor",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Authorization",
+			"item": [
+				{
+					"name": "Get By Username",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{ms-jurisia-security}}/v1/auth/users/user1",
+							"host": [
+								"{{ms-jurisia-security}}"
+							],
+							"path": [
+								"v1",
+								"auth",
+								"users",
+								"user1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Verify Password",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "password",
+									"value": "123",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{ms-jurisia-security}}/v1/auth/users/:userName/verify-password",
+							"host": [
+								"{{ms-jurisia-security}}"
+							],
+							"path": [
+								"v1",
+								"auth",
+								"users",
+								":userName",
+								"verify-password"
+							],
+							"variable": [
+								{
+									"key": "userName",
+									"value": "user1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "login keycloak",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "grant_type",
+									"value": "password",
+									"type": "text"
+								},
+								{
+									"key": "client_id",
+									"value": "appjurisia",
+									"type": "text"
+								},
+								{
+									"key": "client_secret",
+									"value": "4i3MktkUS3ohgzjRFmCKijjHnXtxXCct",
+									"type": "text"
+								},
+								{
+									"key": "scopes",
+									"value": "openid,email",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "username",
+									"value": "usertest",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "password",
+									"value": "1234",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "username",
+									"value": "test2@test.com",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "password",
+									"value": "sergey",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "username",
+									"value": "user1",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "123",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:8080/realms/jurisia/protocol/openid-connect/token",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"realms",
+								"jurisia",
+								"protocol",
+								"openid-connect",
+								"token"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
