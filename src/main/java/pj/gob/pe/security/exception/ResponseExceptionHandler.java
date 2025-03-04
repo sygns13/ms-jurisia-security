@@ -32,6 +32,14 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
 
     }
 
+    @ExceptionHandler(AuthLoginException.class)
+    public ResponseEntity<ExceptionResponse> manejarAuthLoginException(AuthLoginException ex, WebRequest request){
+
+        ExceptionResponse er = new ExceptionResponse(LocalDateTime.now(), ex.getMessage(), request.getDescription(false));
+        return new ResponseEntity<ExceptionResponse>(er, HttpStatus.UNAUTHORIZED);
+
+    }
+
     @ExceptionHandler(ValidationServiceException.class)
     public ResponseEntity<ExceptionResponse> manejarValidationServiceException(ValidationServiceException ex, WebRequest request){
 

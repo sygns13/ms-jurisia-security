@@ -5,7 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import pj.gob.pe.security.dao.DependenciaDAO;
+import pj.gob.pe.security.dao.mysql.DependenciaDAO;
 import pj.gob.pe.security.exception.ValidationServiceException;
 import pj.gob.pe.security.model.entities.Dependencia;
 import pj.gob.pe.security.service.DependenciaService;

@@ -1,6 +1,6 @@
-package pj.gob.pe.security.dao.impl;
+package pj.gob.pe.security.dao.mysql.impl;
 
-import pj.gob.pe.security.dao.GenericDAO;
+import pj.gob.pe.security.dao.mysql.GenericDAO;
 import pj.gob.pe.security.repository.GenericRepo;
 
 import java.util.List;

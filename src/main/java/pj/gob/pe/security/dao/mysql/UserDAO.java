@@ -1,4 +1,4 @@
-package pj.gob.pe.security.dao;
+package pj.gob.pe.security.dao.mysql;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

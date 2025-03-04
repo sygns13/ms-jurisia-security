@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Schema(description = "Authorization TypeUser Model")
+@Schema(description = "Authorization Role Model")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

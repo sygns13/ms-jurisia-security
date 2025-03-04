@@ -2,7 +2,7 @@ package pj.gob.pe.security.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import pj.gob.pe.security.dao.RoleDAO;
+import pj.gob.pe.security.dao.mysql.RoleDAO;
 import pj.gob.pe.security.model.entities.Role;
 import pj.gob.pe.security.service.RoleService;
 

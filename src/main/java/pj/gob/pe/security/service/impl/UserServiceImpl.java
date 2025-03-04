@@ -6,7 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import pj.gob.pe.security.dao.UserDAO;
+import pj.gob.pe.security.dao.mysql.UserDAO;
 import pj.gob.pe.security.exception.ValidationServiceException;
 import pj.gob.pe.security.model.entities.User;
 import pj.gob.pe.security.service.UserService;

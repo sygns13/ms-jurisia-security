@@ -2,7 +2,7 @@ package pj.gob.pe.security.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import pj.gob.pe.security.dao.ModuloDAO;
+import pj.gob.pe.security.dao.mysql.ModuloDAO;
 import pj.gob.pe.security.model.entities.Modulo;
 import pj.gob.pe.security.service.ModuloService;
 

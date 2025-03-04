@@ -2,10 +2,11 @@ package pj.gob.pe.security.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import pj.gob.pe.security.dao.LoginDAO;
+import pj.gob.pe.security.dao.mysql.LoginDAO;
 import pj.gob.pe.security.model.entities.Login;
 import pj.gob.pe.security.service.LoginService;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -17,7 +18,11 @@ public class LoginServiceImpl implements LoginService {
 
     @Override
     public Login registrar(Login login) throws Exception {
-        return null;
+        LocalDateTime fechaActualTime = LocalDateTime.now();
+        login.setFecha(fechaActualTime.toLocalDate());
+        login.setHora(fechaActualTime.toLocalTime());
+
+        return this.grabarRegistro(login);
     }
 
     @Override
@@ -42,7 +47,7 @@ public class LoginServiceImpl implements LoginService {
 
     @Override
     public Login grabarRegistro(Login login) throws Exception {
-        return null;
+        return loginDAO.registrar(login);
     }
 
     @Override

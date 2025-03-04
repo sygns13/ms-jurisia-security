@@ -1,11 +1,10 @@
 package pj.gob.pe.security.service.impl;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import pj.gob.pe.security.dao.TipoUserDAO;
+import pj.gob.pe.security.dao.mysql.TipoUserDAO;
 import pj.gob.pe.security.model.entities.TipoUser;
 import pj.gob.pe.security.service.TipoUserService;
 

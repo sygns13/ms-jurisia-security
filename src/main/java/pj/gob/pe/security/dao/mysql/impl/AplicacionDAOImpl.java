@@ -1,8 +1,8 @@
-package pj.gob.pe.security.dao.impl;
+package pj.gob.pe.security.dao.mysql.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-import pj.gob.pe.security.dao.AplicacionDAO;
+import pj.gob.pe.security.dao.mysql.AplicacionDAO;
 import pj.gob.pe.security.model.entities.Aplicacion;
 import pj.gob.pe.security.repository.GenericRepo;
 import pj.gob.pe.security.repository.AplicacionRepo;

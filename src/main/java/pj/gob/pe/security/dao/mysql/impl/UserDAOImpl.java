@@ -1,10 +1,10 @@
-package pj.gob.pe.security.dao.impl;
+package pj.gob.pe.security.dao.mysql.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
-import pj.gob.pe.security.dao.UserDAO;
+import pj.gob.pe.security.dao.mysql.UserDAO;
 import pj.gob.pe.security.model.entities.User;
 import pj.gob.pe.security.repository.GenericRepo;
 import pj.gob.pe.security.repository.UserRepo;

@@ -1,4 +1,4 @@
-package pj.gob.pe.security.dao;
+package pj.gob.pe.security.dao.mysql;
 
 import java.util.List;
 
