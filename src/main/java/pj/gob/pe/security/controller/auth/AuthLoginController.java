@@ -13,6 +13,7 @@ import pj.gob.pe.security.model.beans.TokenResponse;
 import pj.gob.pe.security.service.externals.AuthService;
 import pj.gob.pe.security.utils.beans.LoginInput;
 import pj.gob.pe.security.utils.beans.LogoutInput;
+import pj.gob.pe.security.utils.beans.RefreshTokenInput;
 import pj.gob.pe.security.utils.beans.VerifySessionInput;
 
 import javax.naming.AuthenticationException;
@@ -37,6 +38,25 @@ public class AuthLoginController {
         }
 
         ResponseLogin response = authService.generateSessionId(login.getUsername(), token, clientIp);
+        if(response == null){
+            throw new AuthLoginException("Error de Credenciales de inicio de sesión o cuenta desabilitada");
+        }
+
+        return new ResponseEntity<ResponseLogin>(response, HttpStatus.OK);
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<ResponseLogin> refreshSesionAppJurisia(@Valid @RequestBody RefreshTokenInput refresh, HttpServletRequest request) throws Exception {
+
+        // Obtener la IP del cliente
+        String clientIp = request.getRemoteAddr();
+
+        TokenResponse token = authService.refreshToken(refresh);
+        if(token == null){
+            throw new AuthLoginException("Error de Credenciales de inicio de sesión o cuenta desabilitada");
+        }
+
+        ResponseLogin response = authService.generateSessionId(refresh.getUsername(), token, clientIp);
         if(response == null){
             throw new AuthLoginException("Error de Credenciales de inicio de sesión o cuenta desabilitada");
         }

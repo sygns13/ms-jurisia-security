@@ -4,6 +4,7 @@ import pj.gob.pe.security.model.beans.ResponseLogin;
 import pj.gob.pe.security.model.beans.TokenResponse;
 import pj.gob.pe.security.utils.beans.LoginInput;
 import pj.gob.pe.security.utils.beans.LogoutInput;
+import pj.gob.pe.security.utils.beans.RefreshTokenInput;
 import pj.gob.pe.security.utils.beans.VerifySessionInput;
 
 public interface AuthService {
@@ -17,4 +18,6 @@ public interface AuthService {
     public ResponseLogin verifySession(VerifySessionInput verifySession) throws Exception;
 
     public void logout(LogoutInput logout);
+
+    public TokenResponse refreshToken(RefreshTokenInput refresh);
 }

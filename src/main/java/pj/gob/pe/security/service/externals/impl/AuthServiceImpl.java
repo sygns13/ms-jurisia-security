@@ -21,6 +21,7 @@ import pj.gob.pe.security.service.externals.AuthService;
 import pj.gob.pe.security.utils.NetworkUtils;
 import pj.gob.pe.security.utils.beans.LoginInput;
 import pj.gob.pe.security.utils.beans.LogoutInput;
+import pj.gob.pe.security.utils.beans.RefreshTokenInput;
 import pj.gob.pe.security.utils.beans.VerifySessionInput;
 
 import java.util.HashMap;
@@ -237,6 +238,33 @@ public class AuthServiceImpl implements AuthService {
                 .retrieve()
                 .toBodilessEntity();
 
+    }
+
+    @Override
+    public TokenResponse refreshToken(RefreshTokenInput refresh){
+        String body = UriComponentsBuilder.newInstance()
+                .queryParam("grant_type", refresh.getGrantType())
+                .queryParam("client_id", refresh.getClientId())
+                .queryParam("client_secret", refresh.getClientSecret())
+                .queryParam("refresh_token", refresh.getRefreshToken())
+                .build()
+                .encode()
+                .toString()
+                .substring(1); // Elimina el "?" inicial
+
+        // Realizar la petición con RestClient y mapear la respuesta directamente a TokenResponse
+        return restClient.post()
+                .uri(properties.getPathLogin())
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+                .body(body)
+                .retrieve()
+                .onStatus(HttpStatusCode::is4xxClientError, (request, response) -> {
+                    throw new AuthLoginException("Error de Credenciales de inicio de sesión o cuenta desabilitada");
+                })
+                .onStatus(HttpStatusCode::is5xxServerError, (request, response) -> {
+                    throw new RuntimeException("Error del servidor, Comunicarse con el administrador");
+                })
+                .body(TokenResponse.class); // Se convierte automáticamente el JSON a la clase Java
     }
 
 }
