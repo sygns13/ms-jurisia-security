@@ -48,15 +48,12 @@ public class AuthLoginController {
     @PostMapping("/refresh")
     public ResponseEntity<ResponseLogin> refreshSesionAppJurisia(@Valid @RequestBody RefreshTokenInput refresh, HttpServletRequest request) throws Exception {
 
-        // Obtener la IP del cliente
-        String clientIp = request.getRemoteAddr();
-
         TokenResponse token = authService.refreshToken(refresh);
         if(token == null){
             throw new AuthLoginException("Error de Credenciales de inicio de sesión o cuenta desabilitada");
         }
 
-        ResponseLogin response = authService.generateSessionId(refresh.getUsername(), token, clientIp);
+        ResponseLogin response = authService.generateSessionIdRefreshToken(refresh.getUsername(), token);
         if(response == null){
             throw new AuthLoginException("Error de Credenciales de inicio de sesión o cuenta desabilitada");
         }

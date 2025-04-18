@@ -13,6 +13,8 @@ public interface AuthService {
 
     public ResponseLogin generateSessionId(String username, TokenResponse token, String clientIp) throws Exception;
 
+    public ResponseLogin generateSessionIdRefreshToken(String username, TokenResponse token) throws Exception;
+
     public ResponseLogin sesionData(String userSessionsId) throws Exception;
 
     public ResponseLogin verifySession(VerifySessionInput verifySession) throws Exception;
