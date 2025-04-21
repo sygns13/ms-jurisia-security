@@ -79,8 +79,8 @@ public class User implements Serializable {
     private String password;
 
     @Schema(description = "Email del Usuario")
-    @NotNull( message = "{users.email.notnull}")
-    @Size(min = 1, max = 250, message = "{users.email.size}")
+    //@NotNull( message = "{users.email.notnull}")
+    //@Size(min = 1, max = 250, message = "{users.email.size}")
     @Email(message = "{users.email.email}")
     @Column(name="email", nullable = true, length = 250)
     private String email;

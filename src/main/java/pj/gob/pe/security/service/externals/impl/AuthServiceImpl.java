@@ -14,19 +14,21 @@ import pj.gob.pe.security.model.beans.ActiveSession;
 import pj.gob.pe.security.model.beans.ResponseLogin;
 import pj.gob.pe.security.model.beans.TokenResponse;
 import pj.gob.pe.security.model.beans.UserLogin;
-import pj.gob.pe.security.model.entities.Login;
-import pj.gob.pe.security.model.entities.User;
+import pj.gob.pe.security.model.entities.*;
+import pj.gob.pe.security.model.keycloak.UserAuth;
 import pj.gob.pe.security.service.LoginService;
+import pj.gob.pe.security.service.UserService;
 import pj.gob.pe.security.service.externals.AuthService;
+import pj.gob.pe.security.service.externals.SIJService;
+import pj.gob.pe.security.service.keycloak.UsersServiceAuth;
+import pj.gob.pe.security.utils.Constantes;
 import pj.gob.pe.security.utils.NetworkUtils;
+import pj.gob.pe.security.utils.beans.DataUsuarioDTO;
 import pj.gob.pe.security.utils.beans.LoginInput;
 import pj.gob.pe.security.utils.beans.LogoutInput;
 import pj.gob.pe.security.utils.beans.VerifySessionInput;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 
 @Service
@@ -37,18 +39,80 @@ public class AuthServiceImpl implements AuthService {
     private final ConfigProperties properties;
     private final LoginService loginService;
     private final UserLoginRedisDao userLoginRedisDao;
+    private final UsersServiceAuth userService;
+    private final SIJService sIJService;
+    private final UserService userServiceCRUD;
 
-    public AuthServiceImpl(RestClient.Builder builder, UserDAO userDAO, ConfigProperties properties,LoginService loginService, UserLoginRedisDao userLoginRedisDao) {
+    public AuthServiceImpl(RestClient.Builder builder, UserDAO userDAO, ConfigProperties properties,LoginService loginService, UserLoginRedisDao userLoginRedisDao, UsersServiceAuth userService, SIJService sIJService, UserService userServiceCRUD) {
         //this.restClient = builder.baseUrl("http://localhost:8080").build();
         this.userDAO = userDAO;
         this.properties = properties;
         this.restClient = builder.baseUrl(properties.getUrlAuthorization()).build();
         this.loginService = loginService;
         this.userLoginRedisDao = userLoginRedisDao;
+        this.userService = userService;
+        this.sIJService = sIJService;
+        this.userServiceCRUD = userServiceCRUD;
     }
 
     @Override
-    public TokenResponse authenticate(LoginInput login) {
+    public TokenResponse authenticate(LoginInput login) throws Exception {
+
+        //inicio - Consulta Datos SIJ
+        UserAuth userAuth = userService.getUserDetails(login.getUsername());
+        if(userAuth == null || userAuth.getUserId() == null){
+            DataUsuarioDTO dataUsuarioSIJ = sIJService.getDatosUser(login.getUsername(), login.getPassword());
+
+            if(dataUsuarioSIJ != null){
+                User user = new User();
+                user.setTipoDocumento(Constantes.TIPO_DOCUMENTO_DNI);
+                user.setDocumento(dataUsuarioSIJ.getDni());
+                user.setApellidos(dataUsuarioSIJ.getApePaterno() + " " + dataUsuarioSIJ.getApeMaterno());
+                user.setNombres(dataUsuarioSIJ.getNombres());
+
+                Dependencia dependencia = new Dependencia();
+                dependencia.setId(Constantes.CANTIDAD_UNIDAD_LONG);
+                user.setDependencia(dependencia);
+
+                Cargo cargo = new Cargo();
+                cargo.setId(Constantes.CANTIDAD_UNIDAD_LONG);
+                user.setCargo(cargo);
+
+                user.setUsername(dataUsuarioSIJ.getUsuario());
+                user.setPassword(dataUsuarioSIJ.getDni());
+                user.setEmail("mail_"+dataUsuarioSIJ.getDni()+"@gmail.com");
+
+                TipoUser tipoUser = new TipoUser();
+                tipoUser.setId(Constantes.TIPO_USER_USUARIO);
+                user.setTipoUser(tipoUser);
+                user.setActivo(Constantes.REGISTRO_ACTIVO);
+
+                Role role1 = new Role();
+                role1.setId(1L);
+
+                Role role2 = new Role();
+                role2.setId(2L);
+
+                Role role3 = new Role();
+                role3.setId(3L);
+
+                Role role4 = new Role();
+                role4.setId(4L);
+
+                List<Role> roles = new ArrayList<>();
+
+                roles.add(role1);
+                roles.add(role2);
+                roles.add(role3);
+                roles.add(role4);
+
+                user.setRoles(roles);
+
+                userServiceCRUD.registrar(user);
+            }
+        }
+        //fin - Consulta Datos SIJ
+
         //String url = "/realms/jurisia/protocol/openid-connect/token";
         // Construcción del cuerpo con Form-UrlEncoded
         String body = UriComponentsBuilder.newInstance()

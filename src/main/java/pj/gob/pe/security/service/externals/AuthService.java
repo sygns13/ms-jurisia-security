@@ -8,7 +8,7 @@ import pj.gob.pe.security.utils.beans.VerifySessionInput;
 
 public interface AuthService {
 
-    public TokenResponse authenticate(LoginInput login);
+    public TokenResponse authenticate(LoginInput login) throws Exception;
 
     public ResponseLogin generateSessionId(String username, TokenResponse token, String clientIp) throws Exception;
 

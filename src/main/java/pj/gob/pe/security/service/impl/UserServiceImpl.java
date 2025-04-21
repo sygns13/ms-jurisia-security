@@ -344,11 +344,13 @@ public class UserServiceImpl implements UserService {
             errors.add(error);
         }
 
+        /*
         if(user.getEmail() == null || user.getEmail().isEmpty()){
             resultado = false;
             error = "Ingrese el Email del Usuario";
             errors.add(error);
         }
+         */
 
         if(user.getTipoUser() == null || user.getTipoUser().getId() == null || user.getTipoUser().getId() <= 0){
             resultado = false;

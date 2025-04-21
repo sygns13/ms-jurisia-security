@@ -26,4 +26,10 @@ public class ConfigProperties {
 
     @Value("${spring.data.redis.ttl:3600}")
     private long REDIS_TTL;
+
+    @Value("${api.judicial.url}")
+    private String urlConsultaSIJ;
+
+    @Value("${api.judicial.get.user.path}")
+    private String ConsultaUsuarioPath;
 }
