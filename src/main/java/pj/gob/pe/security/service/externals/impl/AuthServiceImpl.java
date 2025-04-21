@@ -26,6 +26,7 @@ import pj.gob.pe.security.utils.NetworkUtils;
 import pj.gob.pe.security.utils.beans.DataUsuarioDTO;
 import pj.gob.pe.security.utils.beans.LoginInput;
 import pj.gob.pe.security.utils.beans.LogoutInput;
+import pj.gob.pe.security.utils.beans.RefreshTokenInput;
 import pj.gob.pe.security.utils.beans.VerifySessionInput;
 
 import java.util.*;
@@ -151,7 +152,7 @@ public class AuthServiceImpl implements AuthService {
         Map<String, Object> notEqualFilters = new HashMap<>();
 
         List<User> users = userDAO.findUsersByFiltersV2(filters, notEqualFilters);
-        User userEntity;
+        User userEntity = new User();
 
         if(users.size() > 0)
             userEntity = users.get(0);
@@ -200,6 +201,63 @@ public class AuthServiceImpl implements AuthService {
         login.setIp(clientIp);
         login.setMac(NetworkUtils.getMacAddress(clientIp));
         loginService.registrar(login);
+
+        return responseLogin;
+
+    }
+
+    @Override
+    public ResponseLogin generateSessionIdRefreshToken(String username, TokenResponse token) throws Exception {
+
+        Map<String, Object> filters = new HashMap<>();
+        filters.put("username", username);
+        filters.put("borrado", 0);
+
+        Map<String, Object> notEqualFilters = new HashMap<>();
+
+        List<User> users = userDAO.findUsersByFiltersV2(filters, notEqualFilters);
+        User userEntity = new User();
+
+        if(users.size() > 0)
+            userEntity = users.get(0);
+        else
+            throw new AuthLoginException("Error de Credenciales de inicio de sesión o cuenta desabilitada");
+
+
+        ResponseLogin responseLogin = new ResponseLogin();
+        UserLogin userLogin = new UserLogin();
+
+        userLogin.setUserSessionsId(UUID.randomUUID().toString());
+        userLogin.setIdUser(userEntity.getId());
+        userLogin.setTipoDocumento(userEntity.getTipoDocumento());
+        userLogin.setDocumento(userEntity.getDocumento());
+        userLogin.setApellidos(userEntity.getApellidos());
+        userLogin.setNombres(userEntity.getNombres());
+        userLogin.setUsername(userEntity.getUsername());
+        userLogin.setEmail(userEntity.getEmail());
+        userLogin.setGenero(userEntity.getGenero());
+        userLogin.setTelefono(userEntity.getTelefono());
+        userLogin.setDireccion(userEntity.getDireccion());
+        userLogin.setActivo(userEntity.getActivo());
+        userLogin.setIdDependencia(userEntity.getDependencia() != null ? userEntity.getDependencia().getId() : 0L);
+        userLogin.setNombreDependencia(userEntity.getDependencia() != null ? userEntity.getDependencia().getNombre() : "");
+        userLogin.setCodigoDependencia(userEntity.getDependencia() != null ? userEntity.getDependencia().getCodigo() : "");
+        userLogin.setSiglaDependencia(userEntity.getDependencia() != null ? userEntity.getDependencia().getSigla() : "");
+        userLogin.setIdCargo(userEntity.getCargo() != null ? userEntity.getCargo().getId() : 0L);
+        userLogin.setNombreCargo(userEntity.getCargo() != null ? userEntity.getCargo().getNombre() : "");
+        userLogin.setCodigoCargo(userEntity.getCargo() != null ? userEntity.getCargo().getCodigo() : "");
+        userLogin.setSiglaCargo(userEntity.getCargo() != null ? userEntity.getCargo().getSigla() : "");
+        userLogin.setIdTipoUser(userEntity.getTipoUser() != null ? userEntity.getTipoUser().getId() : 0L);
+        userLogin.setTipoUser(userEntity.getTipoUser() != null ? userEntity.getTipoUser().getNombre() : "");
+
+        userLogin.setToken(token);
+
+        responseLogin.setSuccess(true);
+        responseLogin.setItemFound(true);
+        responseLogin.setUser(userLogin);
+
+        //Guardar Sesion en Redis
+        userLoginRedisDao.saveUserSession("userLogin_"+userLogin.getUserSessionsId(), userLogin);
 
         return responseLogin;
 
@@ -301,6 +359,33 @@ public class AuthServiceImpl implements AuthService {
                 .retrieve()
                 .toBodilessEntity();
 
+    }
+
+    @Override
+    public TokenResponse refreshToken(RefreshTokenInput refresh){
+        String body = UriComponentsBuilder.newInstance()
+                .queryParam("grant_type", refresh.getGrantType())
+                .queryParam("client_id", refresh.getClientId())
+                .queryParam("client_secret", refresh.getClientSecret())
+                .queryParam("refresh_token", refresh.getRefreshToken())
+                .build()
+                .encode()
+                .toString()
+                .substring(1); // Elimina el "?" inicial
+
+        // Realizar la petición con RestClient y mapear la respuesta directamente a TokenResponse
+        return restClient.post()
+                .uri(properties.getPathLogin())
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+                .body(body)
+                .retrieve()
+                .onStatus(HttpStatusCode::is4xxClientError, (request, response) -> {
+                    throw new AuthLoginException("Error de Credenciales de inicio de sesión o cuenta desabilitada");
+                })
+                .onStatus(HttpStatusCode::is5xxServerError, (request, response) -> {
+                    throw new RuntimeException("Error del servidor, Comunicarse con el administrador");
+                })
+                .body(TokenResponse.class); // Se convierte automáticamente el JSON a la clase Java
     }
 
 }
