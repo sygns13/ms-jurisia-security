@@ -75,9 +75,12 @@ public class AuthServiceImpl implements AuthService {
                 dependencia.setId(Constantes.CANTIDAD_UNIDAD_LONG);
                 user.setDependencia(dependencia);
 
+                /*
                 Cargo cargo = new Cargo();
                 cargo.setId(Constantes.CANTIDAD_UNIDAD_LONG);
                 user.setCargo(cargo);
+                 */
+                user.setCargo(dataUsuarioSIJ.getDesper());
 
                 user.setUsername(dataUsuarioSIJ.getUsuario());
                 user.setPassword(dataUsuarioSIJ.getDni());
@@ -179,10 +182,13 @@ public class AuthServiceImpl implements AuthService {
         userLogin.setNombreDependencia(userEntity.getDependencia() != null ? userEntity.getDependencia().getNombre() : "");
         userLogin.setCodigoDependencia(userEntity.getDependencia() != null ? userEntity.getDependencia().getCodigo() : "");
         userLogin.setSiglaDependencia(userEntity.getDependencia() != null ? userEntity.getDependencia().getSigla() : "");
+        /*
         userLogin.setIdCargo(userEntity.getCargo() != null ? userEntity.getCargo().getId() : 0L);
         userLogin.setNombreCargo(userEntity.getCargo() != null ? userEntity.getCargo().getNombre() : "");
         userLogin.setCodigoCargo(userEntity.getCargo() != null ? userEntity.getCargo().getCodigo() : "");
         userLogin.setSiglaCargo(userEntity.getCargo() != null ? userEntity.getCargo().getSigla() : "");
+         */
+        userLogin.setCargo(userEntity.getCargo());
         userLogin.setIdTipoUser(userEntity.getTipoUser() != null ? userEntity.getTipoUser().getId() : 0L);
         userLogin.setTipoUser(userEntity.getTipoUser() != null ? userEntity.getTipoUser().getNombre() : "");
 
@@ -243,10 +249,13 @@ public class AuthServiceImpl implements AuthService {
         userLogin.setNombreDependencia(userEntity.getDependencia() != null ? userEntity.getDependencia().getNombre() : "");
         userLogin.setCodigoDependencia(userEntity.getDependencia() != null ? userEntity.getDependencia().getCodigo() : "");
         userLogin.setSiglaDependencia(userEntity.getDependencia() != null ? userEntity.getDependencia().getSigla() : "");
+        /*
         userLogin.setIdCargo(userEntity.getCargo() != null ? userEntity.getCargo().getId() : 0L);
         userLogin.setNombreCargo(userEntity.getCargo() != null ? userEntity.getCargo().getNombre() : "");
         userLogin.setCodigoCargo(userEntity.getCargo() != null ? userEntity.getCargo().getCodigo() : "");
         userLogin.setSiglaCargo(userEntity.getCargo() != null ? userEntity.getCargo().getSigla() : "");
+        */
+        userLogin.setCargo(userEntity.getCargo());
         userLogin.setIdTipoUser(userEntity.getTipoUser() != null ? userEntity.getTipoUser().getId() : 0L);
         userLogin.setTipoUser(userEntity.getTipoUser() != null ? userEntity.getTipoUser().getNombre() : "");
 

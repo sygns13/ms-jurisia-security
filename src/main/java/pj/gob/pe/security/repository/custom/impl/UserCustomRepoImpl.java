@@ -8,7 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
-import pj.gob.pe.security.model.entities.Cargo;
+//import pj.gob.pe.security.model.entities.Cargo;
 import pj.gob.pe.security.model.entities.Dependencia;
 import pj.gob.pe.security.model.entities.TipoUser;
 import pj.gob.pe.security.model.entities.User;
@@ -31,7 +31,7 @@ public class UserCustomRepoImpl implements UserCustomRepo {
         Root<User> user = query.from(User.class);
 
         // Hacer JOIN con Cargo
-        Join<User, Cargo> cargoJoin = user.join("cargo");
+        //Join<User, Cargo> cargoJoin = user.join("cargo");
 
         // Hacer JOIN con Dependencia
         Join<User, Dependencia> dependenciaJoin = user.join("dependencia");
@@ -53,6 +53,7 @@ public class UserCustomRepoImpl implements UserCustomRepo {
             if (value != null) {
 
                 //Filtros por Cargo
+                /*
                 if (key.startsWith("cargo.")) {
                     String keyC = key.replace("cargo.", "");
                     if (keyC.startsWith("or_")) {
@@ -64,6 +65,7 @@ public class UserCustomRepoImpl implements UserCustomRepo {
                     }
                     return;
                 }
+                */
 
                 //Filtros por Dependencia
                 if (key.startsWith("dependencia.")) {
@@ -137,7 +139,7 @@ public class UserCustomRepoImpl implements UserCustomRepo {
         Root<User> user = query.from(User.class);
 
         // Hacer JOIN con Cargo
-        Join<User, Cargo> cargoJoin = user.join("cargo");
+        //Join<User, Cargo> cargoJoin = user.join("cargo");
 
         // Hacer JOIN con Dependencia
         Join<User, Dependencia> dependenciaJoin = user.join("dependencia");
@@ -159,6 +161,7 @@ public class UserCustomRepoImpl implements UserCustomRepo {
             if (value != null) {
 
                 //Filtros por Cargo
+                /*
                 if (key.startsWith("cargo.")) {
                     String keyC = key.replace("cargo.", "");
                     if (keyC.startsWith("or_")) {
@@ -172,6 +175,7 @@ public class UserCustomRepoImpl implements UserCustomRepo {
                     }
                     return;
                 }
+                */
 
                 //Filtros por Dependencia
                 if (key.startsWith("dependencia.")) {

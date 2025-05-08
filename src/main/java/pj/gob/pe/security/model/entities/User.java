@@ -60,10 +60,11 @@ public class User implements Serializable {
     @JoinColumn(name = "dependenciaId", nullable = false, foreignKey = @ForeignKey(name = "fk_users_Dependencias1"))
     private Dependencia dependencia;
 
-    @Schema(description = "Cargo")
-    @ManyToOne
-    @JoinColumn(name = "cargoId", nullable = false, foreignKey = @ForeignKey(name = "fk_users_Cargos1"))
-    private Cargo cargo;
+    @Schema(description = "Cargo del Usuario")
+    //@NotNull( message = "{users.cargo.notnull}")
+    //@Size(min = 1, max = 150, message = "{users.cargo.size}")
+    @Column(name="cargo", nullable = true, length = 150)
+    private String cargo;
 
     @Schema(description = "Username del Usuario")
     @NotNull( message = "{users.username.notnull}")

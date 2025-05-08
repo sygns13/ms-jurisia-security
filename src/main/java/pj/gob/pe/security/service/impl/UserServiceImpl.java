@@ -60,9 +60,9 @@ public class UserServiceImpl implements UserService {
         filters.put("dependencia.or_nombre", buscar);
         filters.put("dependencia.or_sigla", buscar);
 
-        filters.put("cargo.or_codigo", buscar);
-        filters.put("cargo.or_nombre", buscar);
-        filters.put("cargo.or_sigla", buscar);
+        //filters.put("cargo.or_codigo", buscar);
+        //filters.put("cargo.or_nombre", buscar);
+        //filters.put("cargo.or_sigla", buscar);
 
         filters.put("tipo_user.or_nombre", buscar);
 
@@ -104,6 +104,7 @@ public class UserServiceImpl implements UserService {
         if(user.getEmail() == null) user.setEmail(Constantes.VOID_STRING);
         if(user.getTelefono() == null) user.setTelefono(Constantes.VOID_STRING);
         if(user.getDireccion() == null) user.setDireccion(Constantes.VOID_STRING);
+        if(user.getCargo() == null) user.setCargo(Constantes.VOID_STRING);
         if(user.getActivo() == null) user.setActivo(Constantes.REGISTRO_ACTIVO);
 
         user.setDocumento(user.getDocumento().trim());
@@ -154,6 +155,7 @@ public class UserServiceImpl implements UserService {
         user.setGenero(userEdit.getGenero());
         user.setTelefono(userEdit.getTelefono());
         user.setDireccion(userEdit.getDireccion());
+        user.setCargo(userEdit.getCargo());
         user.setActivo(userEdit.getActivo());
 
         LocalDateTime fechaActualTime = LocalDateTime.now();
@@ -326,9 +328,15 @@ public class UserServiceImpl implements UserService {
             errors.add(error);
         }
 
+        /*
         if(user.getCargo() == null || user.getCargo().getId() == null || user.getCargo().getId() <= 0){
             resultado = false;
             error = "Seleccione el Cargo del Usuario";
+            errors.add(error);
+        }*/
+        if(user.getCargo() == null || user.getCargo().isEmpty()){
+            resultado = false;
+            error = "Ingrese el Cargo del Usuario";
             errors.add(error);
         }
 
@@ -423,9 +431,15 @@ public class UserServiceImpl implements UserService {
             errors.add(error);
         }
 
+        /*
         if(user.getCargo() == null || user.getCargo().getId() == null || user.getCargo().getId() <= 0){
             resultado = false;
             error = "Seleccione el Cargo del Usuario";
+            errors.add(error);
+        }*/
+        if(user.getCargo() == null || user.getCargo().isEmpty()){
+            resultado = false;
+            error = "Ingrese el Cargo del Usuario";
             errors.add(error);
         }
 
