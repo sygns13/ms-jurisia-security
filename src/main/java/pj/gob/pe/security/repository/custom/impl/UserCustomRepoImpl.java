@@ -97,6 +97,12 @@ public class UserCustomRepoImpl implements UserCustomRepo {
                 if (key.startsWith("or_")) {
                     // Filtros que se combinarán con OR
                     orPredicates.add(cb.equal(user.get(key.replace("or_", "")), value));
+                }if (key.startsWith("like_")) {
+                    // Filtros que se combinarán con AND y que usan LIKE
+                    Expression<String> field = user.get(key.replace("like_", ""));
+                    String pattern = "%" + value + "%"; // Búsqueda con comodines
+                    // Filtros que se combinarán con OR
+                    andPredicates.add(cb.like(cb.lower(field), pattern.toLowerCase()));
                 } else {
                     // Filtros que se combinarán con AND
                     andPredicates.add(cb.equal(user.get(key), value));

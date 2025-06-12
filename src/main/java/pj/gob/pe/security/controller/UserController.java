@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +15,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import pj.gob.pe.security.exception.ModeloNotFoundException;
 import pj.gob.pe.security.model.entities.User;
 import pj.gob.pe.security.service.UserService;
+import pj.gob.pe.security.utils.InputConsultaIA;
 
 import java.net.URI;
 import java.util.List;
@@ -145,5 +147,18 @@ public class UserController {
         userService.altabaja(id, valor);
 
         return new ResponseEntity<Void>(HttpStatus.OK);
+    }
+
+    @Operation(summary = "Busqueda de Usuarios por Criterios", description = "Busqueda de Usuarios por Criterios")
+    @PostMapping("/listar-interservices")
+    public ResponseEntity<List<User>> reportCabConsultaIA(@Valid @RequestBody InputConsultaIA inputData) throws Exception{
+
+        List<User> dataResponse = userService.buscarUsuarios(inputData);
+
+        if(dataResponse == null) {
+            throw new ModeloNotFoundException("Error de procesamiento de Datos. Comunicarse con un administrador ");
+        }
+
+        return new ResponseEntity<List<User>>(dataResponse, HttpStatus.OK);
     }
 }

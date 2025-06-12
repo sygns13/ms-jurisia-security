@@ -11,6 +11,7 @@ import pj.gob.pe.security.exception.ValidationServiceException;
 import pj.gob.pe.security.model.entities.User;
 import pj.gob.pe.security.service.UserService;
 import pj.gob.pe.security.utils.Constantes;
+import pj.gob.pe.security.utils.InputConsultaIA;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -75,6 +76,48 @@ public class UserServiceImpl implements UserService {
         Map<String, Object> notEqualFilters = new HashMap<>();
 
         return userDAO.findUsersByFiltersPage(filters, notEqualFilters, pageable);
+    }
+
+    @Override
+    public List<User> buscarUsuarios(InputConsultaIA inputConsultaIA) throws Exception {
+        Map<String, Object> filters = new HashMap<>();
+        Boolean hacerBusqueda = false;
+
+        if(inputConsultaIA.getDocumento() != null && !inputConsultaIA.getDocumento().isEmpty()) {
+            filters.put("like_documento", inputConsultaIA.getDocumento().trim());
+            hacerBusqueda = true;
+        }
+
+        if(inputConsultaIA.getApellidos() != null && !inputConsultaIA.getApellidos().isEmpty()) {
+            filters.put("like_apellidos", inputConsultaIA.getApellidos());
+            hacerBusqueda = true;
+        }
+
+        if(inputConsultaIA.getNombres() != null && !inputConsultaIA.getNombres().isEmpty()) {
+            filters.put("like_nombres", inputConsultaIA.getNombres());
+            hacerBusqueda = true;
+        }
+
+        if(inputConsultaIA.getUsername() != null && !inputConsultaIA.getUsername().isEmpty()) {
+            filters.put("like_username", inputConsultaIA.getUsername());
+            hacerBusqueda = true;
+        }
+
+        if(inputConsultaIA.getEmail() != null && !inputConsultaIA.getEmail().isEmpty()) {
+            filters.put("like_email", inputConsultaIA.getEmail());
+            hacerBusqueda = true;
+        }
+
+        if(!hacerBusqueda) {
+            List<User> users = new ArrayList<>();
+            return users;
+        }
+
+        filters.put("borrado", 0);
+
+        Map<String, Object> notEqualFilters = new HashMap<>();
+
+        return userDAO.findUsersByFiltersV2(filters, notEqualFilters);
     }
 
     @Override
