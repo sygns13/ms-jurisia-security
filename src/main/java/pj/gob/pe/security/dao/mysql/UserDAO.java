@@ -3,6 +3,7 @@ package pj.gob.pe.security.dao.mysql;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import pj.gob.pe.security.model.entities.User;
+import pj.gob.pe.security.utils.UserIdsRequest;
 
 import java.util.List;
 import java.util.Map;
@@ -14,4 +15,6 @@ public interface UserDAO extends GenericDAO<User, Long>{
     List<User> findUsersByFiltersV2(Map<String, Object> filters, Map<String, Object> notEqualFilters);
 
     User findByUsername(String username);
+
+    List<User> getUsersByIds(UserIdsRequest inputUsers);
 }

@@ -8,6 +8,7 @@ import pj.gob.pe.security.dao.mysql.UserDAO;
 import pj.gob.pe.security.model.entities.User;
 import pj.gob.pe.security.repository.GenericRepo;
 import pj.gob.pe.security.repository.UserRepo;
+import pj.gob.pe.security.utils.UserIdsRequest;
 
 import java.util.List;
 import java.util.Map;
@@ -33,5 +34,9 @@ public class UserDAOImpl extends GenericDAOImpl<User, Long> implements UserDAO {
 
     public User findByUsername(String username){
         return repo.findByUsername(username);
+    }
+
+    public List<User> getUsersByIds(UserIdsRequest inputUsers){
+        return repo.findByIdIn(inputUsers.getIdUsers());
     }
 }

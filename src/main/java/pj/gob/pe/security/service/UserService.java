@@ -4,6 +4,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import pj.gob.pe.security.model.entities.User;
 import pj.gob.pe.security.utils.InputConsultaIA;
+import pj.gob.pe.security.utils.UserIdsRequest;
 
 import java.util.List;
 
@@ -15,4 +16,6 @@ public interface UserService extends GeneralService<User, Long>{
     Page<User> listar(Pageable pageable, String buscar, Long dependenciaId) throws Exception;
 
     List<User> buscarUsuarios(InputConsultaIA inputConsultaIA) throws Exception;
+
+    List<User> getUsersByIds(UserIdsRequest inputUsers) throws Exception;
 }

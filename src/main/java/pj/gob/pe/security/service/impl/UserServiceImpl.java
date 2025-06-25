@@ -12,6 +12,7 @@ import pj.gob.pe.security.model.entities.User;
 import pj.gob.pe.security.service.UserService;
 import pj.gob.pe.security.utils.Constantes;
 import pj.gob.pe.security.utils.InputConsultaIA;
+import pj.gob.pe.security.utils.UserIdsRequest;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -547,5 +548,10 @@ public class UserServiceImpl implements UserService {
         resultValidacion.put("warnings",warnings);
 
         return resultado;
+    }
+
+    @Override
+    public List<User> getUsersByIds(UserIdsRequest inputUsers) throws Exception {
+        return userDAO.getUsersByIds(inputUsers);
     }
 }

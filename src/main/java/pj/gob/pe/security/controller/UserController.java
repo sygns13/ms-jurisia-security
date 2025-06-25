@@ -16,6 +16,7 @@ import pj.gob.pe.security.exception.ModeloNotFoundException;
 import pj.gob.pe.security.model.entities.User;
 import pj.gob.pe.security.service.UserService;
 import pj.gob.pe.security.utils.InputConsultaIA;
+import pj.gob.pe.security.utils.UserIdsRequest;
 
 import java.net.URI;
 import java.util.List;
@@ -160,5 +161,12 @@ public class UserController {
         }
 
         return new ResponseEntity<List<User>>(dataResponse, HttpStatus.OK);
+    }
+
+    @Operation(summary = "Busqueda de Usuarios por Criterios", description = "Busqueda de Usuarios por Criterios")
+    @PostMapping("/by-ids")
+    public ResponseEntity<List<User>> getUsersByIds(@RequestBody UserIdsRequest request) throws Exception {
+        List<User> users = userService.getUsersByIds(request);
+        return ResponseEntity.ok(users);
     }
 }
