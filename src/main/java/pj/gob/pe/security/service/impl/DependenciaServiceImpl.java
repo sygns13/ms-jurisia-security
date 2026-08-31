@@ -25,9 +25,14 @@ public class DependenciaServiceImpl implements DependenciaService {
 
     private final DependenciaDAO dependenciaDAO;
 
-    @Transactional(readOnly=false,rollbackFor=Exception.class)
     @Override
     public void altabaja(Long id, Integer valor) throws Exception {
+        this.altabaja(id, valor, Constantes.USUARIO_SISTEMA_ID);
+    }
+
+    @Transactional(readOnly=false,rollbackFor=Exception.class)
+    @Override
+    public void altabaja(Long id, Integer valor, Long userId) throws Exception {
 
         Dependencia dependenciaDB = dependenciaDAO.listarPorId(id);
         LocalDateTime fechaActualTime = LocalDateTime.now();
@@ -37,7 +42,7 @@ public class DependenciaServiceImpl implements DependenciaService {
         dependenciaDB.setUpdTimestamp(fechaActualTime.toEpochSecond(ZoneOffset.UTC));
 
         //Oauth inicio
-        dependenciaDB.setUpdUserId(1L);
+        dependenciaDB.setUpdUserId(userId);
         //Oauth final
 
         dependenciaDB.setActivo(valor);
@@ -68,6 +73,11 @@ public class DependenciaServiceImpl implements DependenciaService {
 
     @Override
     public Dependencia registrar(Dependencia dependencia) throws Exception {
+        return this.registrar(dependencia, Constantes.USUARIO_SISTEMA_ID);
+    }
+
+    @Override
+    public Dependencia registrar(Dependencia dependencia, Long userId) throws Exception {
         LocalDateTime fechaActualTime = LocalDateTime.now();
         dependencia.setRegDate(fechaActualTime.toLocalDate());
         dependencia.setRegDatetime(fechaActualTime);
@@ -78,7 +88,7 @@ public class DependenciaServiceImpl implements DependenciaService {
         }
 
         //Oauth inicio
-        dependencia.setRegUserId(1L);
+        dependencia.setRegUserId(userId);
         //Oauth final
 
         dependencia.setBorrado(Constantes.REGISTRO_NO_BORRADO);
@@ -113,6 +123,11 @@ public class DependenciaServiceImpl implements DependenciaService {
 
     @Override
     public int modificar(Dependencia dependenciaEdit) throws Exception {
+        return this.modificar(dependenciaEdit, Constantes.USUARIO_SISTEMA_ID);
+    }
+
+    @Override
+    public int modificar(Dependencia dependenciaEdit, Long userId) throws Exception {
 
         Dependencia dependencia = dependenciaDAO.listarPorId(dependenciaEdit.getId());
 
@@ -130,7 +145,7 @@ public class DependenciaServiceImpl implements DependenciaService {
         }
 
         //Oauth inicio
-        dependencia.setUpdUserId(1L);
+        dependencia.setUpdUserId(userId);
         //Oauth final
 
         if(dependencia.getCodigo() == null) dependencia.setCodigo(Constantes.VOID_STRING);
@@ -191,12 +206,17 @@ public class DependenciaServiceImpl implements DependenciaService {
 
     @Override
     public void eliminar(Long id) throws Exception {
+        this.eliminar(id, Constantes.USUARIO_SISTEMA_ID);
+    }
+
+    @Override
+    public void eliminar(Long id, Long userId) throws Exception {
         Map<String, Object> resultValidacion = new HashMap<String, Object>();
 
         boolean validacion = this.validacionEliminacion(id, resultValidacion);
 
         if(validacion) {
-            this.grabarEliminar(id);
+            this.grabarEliminar(id, userId);
         }
         else {
             String errorValidacion = "Error de validación Método Eliminar Dependencia";
@@ -225,9 +245,14 @@ public class DependenciaServiceImpl implements DependenciaService {
         return Constantes.CANTIDAD_UNIDAD_INTEGER;
     }
 
-    @Transactional(readOnly=false,rollbackFor=Exception.class)
     @Override
     public void grabarEliminar(Long id) throws Exception {
+        this.grabarEliminar(id, Constantes.USUARIO_SISTEMA_ID);
+    }
+
+    @Transactional(readOnly=false,rollbackFor=Exception.class)
+    @Override
+    public void grabarEliminar(Long id, Long userId) throws Exception {
 
         Dependencia dependenciaDB = dependenciaDAO.listarPorId(id);
         LocalDateTime fechaActualTime = LocalDateTime.now();
@@ -237,7 +262,7 @@ public class DependenciaServiceImpl implements DependenciaService {
         dependenciaDB.setUpdTimestamp(fechaActualTime.toEpochSecond(ZoneOffset.UTC));
 
         //Oauth inicio
-        dependenciaDB.setUpdUserId(1L);
+        dependenciaDB.setUpdUserId(userId);
         //Oauth final
 
         dependenciaDB.setBorrado(Constantes.REGISTRO_BORRADO);

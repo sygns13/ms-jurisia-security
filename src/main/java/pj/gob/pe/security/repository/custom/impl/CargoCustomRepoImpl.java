@@ -113,11 +113,14 @@ public class CargoCustomRepoImpl implements CargoCustomRepo {
         return entityManager.createQuery(query).getResultList();
     }
 
-    @Override
-    public Page<Cargo> findCargosByFiltersPage(Map<String, Object> filters, Map<String, Object> notEqualFilters, Pageable pageable) {
-        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        CriteriaQuery<Cargo> query = cb.createQuery(Cargo.class);
-        Root<Cargo> cargo = query.from(Cargo.class);
+    /**
+     * Construye el predicado de filtrado sobre el Root recibido. Se invoca una vez para la
+     * consulta de datos y otra para la de conteo: cada CriteriaQuery necesita predicados
+     * construidos sobre su propio Root, no se pueden reutilizar entre consultas.
+     */
+    private Predicate construirPredicadoPage(CriteriaBuilder cb, Root<Cargo> cargo,
+                                             Map<String, Object> filters,
+                                             Map<String, Object> notEqualFilters) {
 
         // Lista para predicados que se combinarán con OR
         List<Predicate> orPredicates = new ArrayList<>();
@@ -152,71 +155,47 @@ public class CargoCustomRepoImpl implements CargoCustomRepo {
             }
         });
 
-        // Combinar los predicados OR en un solo predicado
         Predicate orPredicate = orPredicates.isEmpty() ? null : cb.or(orPredicates.toArray(new Predicate[0]));
-
-        // Combinar los predicados AND en un solo predicado
         Predicate andPredicate = andPredicates.isEmpty() ? null : cb.and(andPredicates.toArray(new Predicate[0]));
-
-        // Combinar los predicados NOT EQUAL en un solo predicado
         Predicate notEqualPredicate = notEqualPredicates.isEmpty() ? null : cb.and(notEqualPredicates.toArray(new Predicate[0]));
 
-        // Combinar todos los predicados en un predicado final
-        Predicate finalPredicate = cb.and(
-                orPredicate != null ? orPredicate : cb.conjunction(), // Si no hay OR, usar conjunción (true)
-                andPredicate != null ? andPredicate : cb.conjunction(), // Si no hay AND, usar conjunción (true)
-                notEqualPredicate != null ? notEqualPredicate : cb.conjunction() // Si no hay NOT EQUAL, usar conjunción (true)
+        return cb.and(
+                orPredicate != null ? orPredicate : cb.conjunction(),
+                andPredicate != null ? andPredicate : cb.conjunction(),
+                notEqualPredicate != null ? notEqualPredicate : cb.conjunction()
         );
+    }
 
-        // Aplicar el predicado final a la consulta
-        query.select(cargo).where(finalPredicate);
+    @Override
+    public Page<Cargo> findCargosByFiltersPage(Map<String, Object> filters, Map<String, Object> notEqualFilters, Pageable pageable) {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
 
-        // Crear la consulta tipada
+        // Consulta de datos
+        CriteriaQuery<Cargo> query = cb.createQuery(Cargo.class);
+        Root<Cargo> cargo = query.from(Cargo.class);
+        query.select(cargo).where(construirPredicadoPage(cb, cargo, filters, notEqualFilters));
+
+        if (pageable.getSort().isSorted()) {
+            List<Order> ordenes = new ArrayList<>();
+            pageable.getSort().forEach(orden -> ordenes.add(
+                    orden.isAscending() ? cb.asc(cargo.get(orden.getProperty()))
+                                        : cb.desc(cargo.get(orden.getProperty()))));
+            query.orderBy(ordenes);
+        }
+
         TypedQuery<Cargo> typedQuery = entityManager.createQuery(query);
-
-        // Aplicar paginación
         typedQuery.setFirstResult((int) pageable.getOffset());
         typedQuery.setMaxResults(pageable.getPageSize());
 
-        // Obtener los resultados
         List<Cargo> resultList = typedQuery.getResultList();
 
-        // Crear consulta para contar el total de elementos sin paginación
+        // Consulta de conteo: Root propio y predicados reconstruidos sobre él
         CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
         Root<Cargo> countRoot = countQuery.from(Cargo.class);
+        countQuery.select(cb.count(countRoot))
+                  .where(construirPredicadoPage(cb, countRoot, filters, notEqualFilters));
 
-        // Replicar los joins y predicados en la consulta de conteo
-
-        /*
-        Predicate countFinalPredicate = cb.and(
-                !orPredicates.isEmpty() ? cb.or(orPredicates.toArray(new Predicate[0])) : cb.conjunction(),
-                !andPredicates.isEmpty() ? cb.and(andPredicates.toArray(new Predicate[0])) : cb.conjunction(),
-                !notEqualPredicates.isEmpty() ? cb.and(notEqualPredicates.toArray(new Predicate[0])) : cb.conjunction()
-        );*/
-        Predicate countFinalPredicate = cb.and(
-                !orPredicates.isEmpty() ? cb.or(orPredicates.stream()
-                        .filter(p -> !p.getExpressions().isEmpty())
-                        .map(p -> p.getExpressions().get(0))
-                        .toArray(Predicate[]::new)) : cb.conjunction(),
-                !andPredicates.isEmpty() ? cb.and(andPredicates.stream()
-                        .filter(p -> !p.getExpressions().isEmpty())
-                        .map(p -> p.getExpressions().get(0))
-                        .toArray(Predicate[]::new)) : cb.conjunction(),
-                !notEqualPredicates.isEmpty() ? cb.and(notEqualPredicates.stream()
-                        .filter(p -> !p.getExpressions().isEmpty())
-                        .map(p -> p.getExpressions().get(0))
-                        .toArray(Predicate[]::new)) : cb.conjunction()
-        );
-
-
-        countQuery.select(cb.count(countRoot)).where(countFinalPredicate);
-        //countQuery.select(cb.count(countRoot));
-
-         //Obtener el total de registros
         Long total = entityManager.createQuery(countQuery).getSingleResult();
-
-//        Long total = entityManager.createQuery("SELECT COUNT(c) FROM Cargo c", Long.class)
-//                .getSingleResult();
 
         // Crear y devolver el objeto Page
         return new PageImpl<>(resultList, pageable, total);

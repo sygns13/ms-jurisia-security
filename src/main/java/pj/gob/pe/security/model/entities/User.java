@@ -2,6 +2,7 @@ package pj.gob.pe.security.model.entities;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -72,11 +73,11 @@ public class User implements Serializable {
     @Column(name="username", nullable = true, length = 250)
     private String username;
 
-    @Schema(description = "Password del Usuario")
-    @NotNull( message = "{users.password.notnull}")
+    @Schema(description = "Password del Usuario. Obligatorio al registrar; en la modificación " +
+            "es opcional y, si no se envía, se conserva el que ya tiene el Usuario")
     @Size(min = 1, max = 250, message = "{users.password.size}")
     @Column(name="password", nullable = true, length = 250)
-    @JsonIgnore
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
     @Schema(description = "Email del Usuario")

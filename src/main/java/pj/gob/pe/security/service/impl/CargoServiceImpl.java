@@ -25,9 +25,14 @@ public class CargoServiceImpl implements CargoService {
 
     private final CargoDAO cargoDAO;
 
-    @Transactional(readOnly=false,rollbackFor=Exception.class)
     @Override
     public void altabaja(Long id, Integer valor) throws Exception {
+        this.altabaja(id, valor, Constantes.USUARIO_SISTEMA_ID);
+    }
+
+    @Transactional(readOnly=false,rollbackFor=Exception.class)
+    @Override
+    public void altabaja(Long id, Integer valor, Long userId) throws Exception {
 
         Cargo cargoDB = cargoDAO.listarPorId(id);
         LocalDateTime fechaActualTime = LocalDateTime.now();
@@ -37,7 +42,7 @@ public class CargoServiceImpl implements CargoService {
         cargoDB.setUpdTimestamp(fechaActualTime.toEpochSecond(ZoneOffset.UTC));
 
         //Oauth inicio
-        cargoDB.setUpdUserId(1L);
+        cargoDB.setUpdUserId(userId);
         //Oauth final
 
         cargoDB.setActivo(valor);
@@ -59,13 +64,18 @@ public class CargoServiceImpl implements CargoService {
 
     @Override
     public Cargo registrar(Cargo cargo) throws Exception {
+        return this.registrar(cargo, Constantes.USUARIO_SISTEMA_ID);
+    }
+
+    @Override
+    public Cargo registrar(Cargo cargo, Long userId) throws Exception {
         LocalDateTime fechaActualTime = LocalDateTime.now();
         cargo.setRegDate(fechaActualTime.toLocalDate());
         cargo.setRegDatetime(fechaActualTime);
         cargo.setRegTimestamp(fechaActualTime.toEpochSecond(ZoneOffset.UTC));
 
         //Oauth inicio
-        cargo.setRegUserId(1L);
+        cargo.setRegUserId(userId);
         //Oauth final
 
         cargo.setBorrado(Constantes.REGISTRO_NO_BORRADO);
@@ -100,6 +110,11 @@ public class CargoServiceImpl implements CargoService {
 
     @Override
     public int modificar(Cargo cargoEdit) throws Exception {
+        return this.modificar(cargoEdit, Constantes.USUARIO_SISTEMA_ID);
+    }
+
+    @Override
+    public int modificar(Cargo cargoEdit, Long userId) throws Exception {
 
         Cargo cargo = cargoDAO.listarPorId(cargoEdit.getId());
 
@@ -113,7 +128,7 @@ public class CargoServiceImpl implements CargoService {
         cargo.setUpdTimestamp(fechaActualTime.toEpochSecond(ZoneOffset.UTC));
 
         //Oauth inicio
-        cargo.setUpdUserId(1L);
+        cargo.setUpdUserId(userId);
         //Oauth final
 
         if(cargo.getCodigo() == null) cargo.setCodigo(Constantes.VOID_STRING);
@@ -174,12 +189,17 @@ public class CargoServiceImpl implements CargoService {
 
     @Override
     public void eliminar(Long id) throws Exception {
+        this.eliminar(id, Constantes.USUARIO_SISTEMA_ID);
+    }
+
+    @Override
+    public void eliminar(Long id, Long userId) throws Exception {
         Map<String, Object> resultValidacion = new HashMap<String, Object>();
 
         boolean validacion = this.validacionEliminacion(id, resultValidacion);
 
         if(validacion) {
-            this.grabarEliminar(id);
+            this.grabarEliminar(id, userId);
         }
         else {
             String errorValidacion = "Error de validación Método Eliminar Cargo";
@@ -208,9 +228,14 @@ public class CargoServiceImpl implements CargoService {
         return Constantes.CANTIDAD_UNIDAD_INTEGER;
     }
 
-    @Transactional(readOnly=false,rollbackFor=Exception.class)
     @Override
     public void grabarEliminar(Long id) throws Exception {
+        this.grabarEliminar(id, Constantes.USUARIO_SISTEMA_ID);
+    }
+
+    @Transactional(readOnly=false,rollbackFor=Exception.class)
+    @Override
+    public void grabarEliminar(Long id, Long userId) throws Exception {
 
         Cargo cargoDB = cargoDAO.listarPorId(id);
         LocalDateTime fechaActualTime = LocalDateTime.now();
@@ -220,7 +245,7 @@ public class CargoServiceImpl implements CargoService {
         cargoDB.setUpdTimestamp(fechaActualTime.toEpochSecond(ZoneOffset.UTC));
 
         //Oauth inicio
-        cargoDB.setUpdUserId(1L);
+        cargoDB.setUpdUserId(userId);
         //Oauth final
 
         cargoDB.setBorrado(Constantes.REGISTRO_BORRADO);

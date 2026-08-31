@@ -7,11 +7,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import pj.gob.pe.security.exception.ModeloNotFoundException;
 import pj.gob.pe.security.model.entities.Modulo;
 import pj.gob.pe.security.service.ModuloService;
+import pj.gob.pe.security.service.externals.AuthService;
 
 import java.util.List;
 
@@ -22,10 +24,14 @@ import java.util.List;
 public class ModuloController {
 
     private final ModuloService moduloService;
+    private final AuthService authService;
 
     @Operation(summary = "Consulta Lista de Modulos", description = "Retorna una Lista de Modulos")
     @GetMapping("/get-all")
-    public ResponseEntity<List<Modulo>> listarAll() throws Exception{
+    public ResponseEntity<List<Modulo>> listarAll(
+            @RequestHeader("SessionId") String SessionId) throws Exception{
+
+        authService.validarSesion(SessionId);
 
         List<Modulo> resultado = moduloService.listar();
 
@@ -35,10 +41,10 @@ public class ModuloController {
     @Operation(summary = "Consulta una Modulo por ID", description = "Retorna una Modulo filtrada por ID")
     @GetMapping("/{id}")
     public ResponseEntity<Modulo> listarPorId(
-            //@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
+            @RequestHeader("SessionId") String SessionId,
             @PathVariable("id") Long id) throws Exception{
 
-        //this.SetClaims(Authorization);
+        authService.validarSesion(SessionId);
 
         Modulo obj = moduloService.listarPorId(id);
 

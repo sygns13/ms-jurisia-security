@@ -79,11 +79,14 @@ public class DependenciaCustomRepoImpl implements DependenciaCustomRepo {
         return entityManager.createQuery(query).getResultList();
     }
 
-    @Override
-    public Page<Dependencia> findDependenciasByFiltersPage(Map<String, Object> filters, Map<String, Object> notEqualFilters, Pageable pageable) {
-        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        CriteriaQuery<Dependencia> query = cb.createQuery(Dependencia.class);
-        Root<Dependencia> dependencia = query.from(Dependencia.class);
+    /**
+     * Construye el predicado de filtrado sobre el Root recibido. Se invoca una vez para la
+     * consulta de datos y otra para la de conteo: cada CriteriaQuery necesita predicados
+     * construidos sobre su propio Root, no se pueden reutilizar entre consultas.
+     */
+    private Predicate construirPredicadoPage(CriteriaBuilder cb, Root<Dependencia> dependencia,
+                                             Map<String, Object> filters,
+                                             Map<String, Object> notEqualFilters) {
 
         // Lista para predicados que se combinarán con OR
         List<Predicate> orPredicates = new ArrayList<>();
@@ -118,58 +121,46 @@ public class DependenciaCustomRepoImpl implements DependenciaCustomRepo {
             }
         });
 
-        // Combinar los predicados OR en un solo predicado
         Predicate orPredicate = orPredicates.isEmpty() ? null : cb.or(orPredicates.toArray(new Predicate[0]));
-
-        // Combinar los predicados AND en un solo predicado
         Predicate andPredicate = andPredicates.isEmpty() ? null : cb.and(andPredicates.toArray(new Predicate[0]));
-
-        // Combinar los predicados NOT EQUAL en un solo predicado
         Predicate notEqualPredicate = notEqualPredicates.isEmpty() ? null : cb.and(notEqualPredicates.toArray(new Predicate[0]));
 
-        // Combinar todos los predicados en un predicado final
-        Predicate finalPredicate = cb.and(
-                orPredicate != null ? orPredicate : cb.conjunction(), // Si no hay OR, usar conjunción (true)
-                andPredicate != null ? andPredicate : cb.conjunction(), // Si no hay AND, usar conjunción (true)
-                notEqualPredicate != null ? notEqualPredicate : cb.conjunction() // Si no hay NOT EQUAL, usar conjunción (true)
+        return cb.and(
+                orPredicate != null ? orPredicate : cb.conjunction(),
+                andPredicate != null ? andPredicate : cb.conjunction(),
+                notEqualPredicate != null ? notEqualPredicate : cb.conjunction()
         );
+    }
 
-        // Aplicar el predicado final a la consulta
-        query.select(dependencia).where(finalPredicate);
+    @Override
+    public Page<Dependencia> findDependenciasByFiltersPage(Map<String, Object> filters, Map<String, Object> notEqualFilters, Pageable pageable) {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
 
-        // Crear la consulta tipada
+        // Consulta de datos
+        CriteriaQuery<Dependencia> query = cb.createQuery(Dependencia.class);
+        Root<Dependencia> dependencia = query.from(Dependencia.class);
+        query.select(dependencia).where(construirPredicadoPage(cb, dependencia, filters, notEqualFilters));
+
+        if (pageable.getSort().isSorted()) {
+            List<Order> ordenes = new ArrayList<>();
+            pageable.getSort().forEach(orden -> ordenes.add(
+                    orden.isAscending() ? cb.asc(dependencia.get(orden.getProperty()))
+                                        : cb.desc(dependencia.get(orden.getProperty()))));
+            query.orderBy(ordenes);
+        }
+
         TypedQuery<Dependencia> typedQuery = entityManager.createQuery(query);
-
-        // Aplicar paginación
         typedQuery.setFirstResult((int) pageable.getOffset());
         typedQuery.setMaxResults(pageable.getPageSize());
 
-        // Obtener los resultados
         List<Dependencia> resultList = typedQuery.getResultList();
 
-        // Crear consulta para contar el total de elementos sin paginación
+        // Consulta de conteo: Root propio y predicados reconstruidos sobre él
         CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
         Root<Dependencia> countRoot = countQuery.from(Dependencia.class);
+        countQuery.select(cb.count(countRoot))
+                  .where(construirPredicadoPage(cb, countRoot, filters, notEqualFilters));
 
-        // Replicar los joins y predicados en la consulta de conteo
-        Predicate countFinalPredicate = cb.and(
-                !orPredicates.isEmpty() ? cb.or(orPredicates.stream()
-                        .filter(p -> !p.getExpressions().isEmpty())
-                        .map(p -> p.getExpressions().get(0))
-                        .toArray(Predicate[]::new)) : cb.conjunction(),
-                !andPredicates.isEmpty() ? cb.and(andPredicates.stream()
-                        .filter(p -> !p.getExpressions().isEmpty())
-                        .map(p -> p.getExpressions().get(0))
-                        .toArray(Predicate[]::new)) : cb.conjunction(),
-                !notEqualPredicates.isEmpty() ? cb.and(notEqualPredicates.stream()
-                        .filter(p -> !p.getExpressions().isEmpty())
-                        .map(p -> p.getExpressions().get(0))
-                        .toArray(Predicate[]::new)) : cb.conjunction()
-        );
-
-        countQuery.select(cb.count(countRoot)).where(countFinalPredicate);
-
-        //Obtener el total de registros
         Long total = entityManager.createQuery(countQuery).getSingleResult();
 
         // Crear y devolver el objeto Page

@@ -12,8 +12,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import pj.gob.pe.security.exception.ModeloNotFoundException;
+import pj.gob.pe.security.model.beans.UserLogin;
 import pj.gob.pe.security.model.entities.Dependencia;
 import pj.gob.pe.security.service.DependenciaService;
+import pj.gob.pe.security.service.externals.AuthService;
 
 import java.net.URI;
 import java.util.List;
@@ -25,14 +27,14 @@ import java.util.List;
 public class DependenciaController {
 
     private final DependenciaService dependenciaService;
+    private final AuthService authService;
 
     @Operation(summary = "Consulta Lista de todas las dependencias", description = "Retorna una Lista de todas las dependencias de usuarios")
     @GetMapping("/get-all")
     public ResponseEntity<List<Dependencia>> listarAll(
-            //@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization
-    ) throws Exception{
+            @RequestHeader("SessionId") String SessionId) throws Exception{
 
-        //this.SetClaims(Authorization);
+        authService.validarSesion(SessionId);
 
         List<Dependencia> resultado = dependenciaService.listar();
 
@@ -42,14 +44,13 @@ public class DependenciaController {
     @Operation(summary = "Consulta Lista de dependencias Paginadas", description = "Retorna una Lista de dependencias de usuarios paginadas")
     @GetMapping
     public ResponseEntity<Page<Dependencia>> listar(
-            //@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
+            @RequestHeader("SessionId") String SessionId,
             @RequestParam(name = "page", defaultValue = "0") int page,
             @RequestParam(name = "size", defaultValue = "5") int size,
             @RequestParam(name = "buscar", defaultValue = "") String buscar,
             @RequestParam(name = "dependenciaId", defaultValue = "0") long dependenciaId) throws Exception{
 
-        // @RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization, @RequestHeader Map<String, String> headers
-        //this.SetClaims(Authorization);
+        authService.validarSesion(SessionId);
 
         Pageable pageable = PageRequest.of(page,size);
         Page<Dependencia> resultado = dependenciaService.listar(pageable, buscar, dependenciaId);
@@ -60,10 +61,10 @@ public class DependenciaController {
     @Operation(summary = "Consulta una Dependencia por ID", description = "Retorna una Dependencia filtrada por ID")
     @GetMapping("/{id}")
     public ResponseEntity<Dependencia> listarPorId(
-            //@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
+            @RequestHeader("SessionId") String SessionId,
             @PathVariable("id") Long id) throws Exception{
 
-        //this.SetClaims(Authorization);
+        authService.validarSesion(SessionId);
 
         Dependencia obj = dependenciaService.listarPorId(id);
 
@@ -77,13 +78,13 @@ public class DependenciaController {
     @Operation(summary = "Creación de una Dependencia", description = "Registro de una nueva Dependencia")
     @PostMapping
     public ResponseEntity<Dependencia> registrar(
-            //@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
+            @RequestHeader("SessionId") String SessionId,
             @Valid @RequestBody Dependencia a) throws Exception{
 
-        //this.SetClaims(Authorization);
+        UserLogin userLogin = authService.validarSesion(SessionId);
 
         a.setId(null);
-        Dependencia obj = dependenciaService.registrar(a);
+        Dependencia obj = dependenciaService.registrar(a, userLogin.getIdUser());
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getId()).toUri();
 
         return  ResponseEntity.created(location).build();
@@ -92,10 +93,10 @@ public class DependenciaController {
     @Operation(summary = "Modificación de una Dependencia", description = "Modificación de una Dependencia")
     @PutMapping
     public ResponseEntity<Integer> modificar(
-            //@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
+            @RequestHeader("SessionId") String SessionId,
             @Valid @RequestBody Dependencia a) throws Exception{
 
-        //this.SetClaims(Authorization);
+        UserLogin userLogin = authService.validarSesion(SessionId);
 
         if(a.getId() == null){
             throw new ModeloNotFoundException("ID NO ENVIADO ");
@@ -107,7 +108,7 @@ public class DependenciaController {
             throw new ModeloNotFoundException("ID NO ENCONTRADO "+ a.getId());
         }
 
-        int obj = dependenciaService.modificar(a);
+        int obj = dependenciaService.modificar(a, userLogin.getIdUser());
 
         return new ResponseEntity<Integer>(obj, HttpStatus.OK);
     }
@@ -115,17 +116,17 @@ public class DependenciaController {
     @Operation(summary = "Elimina una Dependencia por ID", description = "Elimina una Dependencia por ID")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminar(
-            //@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
+            @RequestHeader("SessionId") String SessionId,
             @PathVariable("id") Long id) throws Exception{
 
-        //this.SetClaims(Authorization);
+        UserLogin userLogin = authService.validarSesion(SessionId);
 
         Dependencia obj = dependenciaService.listarPorId(id);
 
         if(obj == null) {
             throw new ModeloNotFoundException("ID NO ENCONTRADO "+ id);
         }
-        dependenciaService.eliminar(id);
+        dependenciaService.eliminar(id, userLogin.getIdUser());
 
         return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
     }
@@ -133,17 +134,17 @@ public class DependenciaController {
     @Operation(summary = "Activa o Desactiva un Dependencia por ID", description = "Activa o Desactiva un Dependencia por ID")
     @PatchMapping("/activation/{id}/{valor}")
     public ResponseEntity<Void> altabaja(
-            //@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
+            @RequestHeader("SessionId") String SessionId,
             @PathVariable("id") Long id, @PathVariable("valor") Integer valor) throws Exception{
 
-        //this.SetClaims(Authorization);
+        UserLogin userLogin = authService.validarSesion(SessionId);
 
         Dependencia obj = dependenciaService.listarPorId(id);
 
         if(obj == null) {
             throw new ModeloNotFoundException("ID NO ENCONTRADO "+ id);
         }
-        dependenciaService.altabaja(id, valor);
+        dependenciaService.altabaja(id, valor, userLogin.getIdUser());
 
         return new ResponseEntity<Void>(HttpStatus.OK);
     }

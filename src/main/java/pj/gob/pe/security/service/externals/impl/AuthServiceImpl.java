@@ -10,6 +10,7 @@ import pj.gob.pe.security.configuration.ConfigProperties;
 import pj.gob.pe.security.dao.mysql.UserDAO;
 import pj.gob.pe.security.dao.redis.UserLoginRedisDao;
 import pj.gob.pe.security.exception.AuthLoginException;
+import pj.gob.pe.security.exception.ValidationSessionServiceException;
 import pj.gob.pe.security.model.beans.ActiveSession;
 import pj.gob.pe.security.model.beans.ResponseLogin;
 import pj.gob.pe.security.model.beans.TokenResponse;
@@ -295,6 +296,26 @@ public class AuthServiceImpl implements AuthService {
             responseLogin.setUser(userLogin);
         }
         return responseLogin;
+    }
+
+    @Override
+    public UserLogin validarSesion(String SessionId) throws Exception {
+
+        String errorValidacion;
+
+        if(SessionId == null || SessionId.isEmpty()){
+            errorValidacion = "La sessión remitida es inválida";
+            throw new ValidationSessionServiceException(errorValidacion);
+        }
+
+        ResponseLogin responseLogin = this.sesionData(SessionId);
+
+        if(responseLogin == null || !responseLogin.isSuccess() || !responseLogin.isItemFound() || responseLogin.getUser() == null){
+            errorValidacion = "La sessión remitida es inválida";
+            throw new ValidationSessionServiceException(errorValidacion);
+        }
+
+        return responseLogin.getUser();
     }
 
     @Override

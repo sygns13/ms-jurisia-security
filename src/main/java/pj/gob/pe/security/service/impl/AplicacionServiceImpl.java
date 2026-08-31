@@ -3,7 +3,10 @@ package pj.gob.pe.security.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import pj.gob.pe.security.dao.mysql.AplicacionDAO;
+import pj.gob.pe.security.dao.mysql.AsignacionDAO;
 import pj.gob.pe.security.model.entities.Aplicacion;
+import pj.gob.pe.security.model.entities.Modulo;
+import pj.gob.pe.security.model.entities.User;
 import pj.gob.pe.security.service.AplicacionService;
 
 import java.util.List;
@@ -14,6 +17,7 @@ import java.util.Map;
 public class AplicacionServiceImpl implements AplicacionService {
 
     private final AplicacionDAO aplicacionDAO;
+    private final AsignacionDAO asignacionDAO;
 
     @Override
     public Aplicacion registrar(Aplicacion aplicacion) throws Exception {
@@ -68,5 +72,19 @@ public class AplicacionServiceImpl implements AplicacionService {
     @Override
     public boolean validacionEliminacion(Long id, Map<String, Object> resultValidacion) throws Exception {
         return false;
+    }
+
+    // =====================================================================
+    // Modulos y Usuarios de la Aplicacion
+    // =====================================================================
+
+    @Override
+    public List<Modulo> listarModulos(Long aplicacionId) throws Exception {
+        return asignacionDAO.listarModulosDeAplicacion(aplicacionId);
+    }
+
+    @Override
+    public List<User> listarUsuarios(Long aplicacionId) throws Exception {
+        return asignacionDAO.listarUsuariosDeAplicacion(aplicacionId);
     }
 }

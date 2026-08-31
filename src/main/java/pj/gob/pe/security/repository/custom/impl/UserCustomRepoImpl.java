@@ -138,19 +138,19 @@ public class UserCustomRepoImpl implements UserCustomRepo {
         return entityManager.createQuery(query).getResultList();
     }
 
-    @Override
-    public Page<User> findUsersByFiltersPage(Map<String, Object> filters, Map<String, Object> notEqualFilters, Pageable pageable) {
-        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        CriteriaQuery<User> query = cb.createQuery(User.class);
-        Root<User> user = query.from(User.class);
-
-        // Hacer JOIN con Cargo
-        //Join<User, Cargo> cargoJoin = user.join("cargo");
+    /**
+     * Construye el predicado de filtrado sobre el Root recibido. Se invoca una vez para la
+     * consulta de datos y otra para la de conteo: cada CriteriaQuery necesita predicados
+     * construidos sobre su propio Root, no se pueden reutilizar entre consultas.
+     */
+    private Predicate construirPredicadoPage(CriteriaBuilder cb, Root<User> user,
+                                             Map<String, Object> filters,
+                                             Map<String, Object> notEqualFilters) {
 
         // Hacer JOIN con Dependencia
         Join<User, Dependencia> dependenciaJoin = user.join("dependencia");
 
-        // Hacer JOIN con Cargo
+        // Hacer JOIN con Tipo de Usuario
         Join<User, TipoUser> tipoUserJoin = user.join("tipoUser");
 
         // Lista para predicados que se combinarán con OR
@@ -166,33 +166,14 @@ public class UserCustomRepoImpl implements UserCustomRepo {
         filters.forEach((key, value) -> {
             if (value != null) {
 
-                //Filtros por Cargo
-                /*
-                if (key.startsWith("cargo.")) {
-                    String keyC = key.replace("cargo.", "");
-                    if (keyC.startsWith("or_")) {
-                        Expression<String> field = cargoJoin.get(keyC.replace("or_", ""));
-                        String pattern = "%" + value + "%"; // Búsqueda con comodines
-                        // Filtros que se combinarán con OR
-                        orPredicates.add(cb.like(cb.lower(field), pattern.toLowerCase()));
-                    } else {
-                        // Filtros que se combinarán con AND
-                        andPredicates.add(cb.equal(cargoJoin.get(keyC), value));
-                    }
-                    return;
-                }
-                */
-
                 //Filtros por Dependencia
                 if (key.startsWith("dependencia.")) {
                     String keyD = key.replace("dependencia.", "");
                     if (keyD.startsWith("or_")) {
                         Expression<String> field = dependenciaJoin.get(keyD.replace("or_", ""));
                         String pattern = "%" + value + "%"; // Búsqueda con comodines
-                        // Filtros que se combinarán con OR
                         orPredicates.add(cb.like(cb.lower(field), pattern.toLowerCase()));
                     } else {
-                        // Filtros que se combinarán con AND
                         andPredicates.add(cb.equal(dependenciaJoin.get(keyD), value));
                     }
                     return;
@@ -204,10 +185,8 @@ public class UserCustomRepoImpl implements UserCustomRepo {
                     if (keyT.startsWith("or_")) {
                         Expression<String> field = tipoUserJoin.get(keyT.replace("or_", ""));
                         String pattern = "%" + value + "%"; // Búsqueda con comodines
-                        // Filtros que se combinarán con OR
                         orPredicates.add(cb.like(cb.lower(field), pattern.toLowerCase()));
                     } else {
-                        // Filtros que se combinarán con AND
                         andPredicates.add(cb.equal(tipoUserJoin.get(keyT), value));
                     }
                     return;
@@ -217,10 +196,8 @@ public class UserCustomRepoImpl implements UserCustomRepo {
                 if (key.startsWith("or_")) {
                     Expression<String> field = user.get(key.replace("or_", ""));
                     String pattern = "%" + value + "%"; // Búsqueda con comodines
-                    // Filtros que se combinarán con OR
                     orPredicates.add(cb.like(cb.lower(field), pattern.toLowerCase()));
                 } else {
-                    // Filtros que se combinarán con AND
                     andPredicates.add(cb.equal(user.get(key), value));
                 }
             }
@@ -233,61 +210,48 @@ public class UserCustomRepoImpl implements UserCustomRepo {
             }
         });
 
-        // Combinar los predicados OR en un solo predicado
         Predicate orPredicate = orPredicates.isEmpty() ? null : cb.or(orPredicates.toArray(new Predicate[0]));
-
-        // Combinar los predicados AND en un solo predicado
         Predicate andPredicate = andPredicates.isEmpty() ? null : cb.and(andPredicates.toArray(new Predicate[0]));
-
-        // Combinar los predicados NOT EQUAL en un solo predicado
         Predicate notEqualPredicate = notEqualPredicates.isEmpty() ? null : cb.and(notEqualPredicates.toArray(new Predicate[0]));
 
-        // Combinar todos los predicados en un predicado final
-        Predicate finalPredicate = cb.and(
-                orPredicate != null ? orPredicate : cb.conjunction(), // Si no hay OR, usar conjunción (true)
-                andPredicate != null ? andPredicate : cb.conjunction(), // Si no hay AND, usar conjunción (true)
-                notEqualPredicate != null ? notEqualPredicate : cb.conjunction() // Si no hay NOT EQUAL, usar conjunción (true)
+        return cb.and(
+                orPredicate != null ? orPredicate : cb.conjunction(),
+                andPredicate != null ? andPredicate : cb.conjunction(),
+                notEqualPredicate != null ? notEqualPredicate : cb.conjunction()
         );
+    }
 
-        // Aplicar el predicado final a la consulta
-        query.select(user).where(finalPredicate);
+    @Override
+    public Page<User> findUsersByFiltersPage(Map<String, Object> filters, Map<String, Object> notEqualFilters, Pageable pageable) {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
 
-        // Crear la consulta tipada
+        // Consulta de datos
+        CriteriaQuery<User> query = cb.createQuery(User.class);
+        Root<User> user = query.from(User.class);
+        query.select(user).where(construirPredicadoPage(cb, user, filters, notEqualFilters));
+
+        if (pageable.getSort().isSorted()) {
+            List<Order> ordenes = new ArrayList<>();
+            pageable.getSort().forEach(orden -> ordenes.add(
+                    orden.isAscending() ? cb.asc(user.get(orden.getProperty()))
+                                        : cb.desc(user.get(orden.getProperty()))));
+            query.orderBy(ordenes);
+        }
+
         TypedQuery<User> typedQuery = entityManager.createQuery(query);
-
-        // Aplicar paginación
         typedQuery.setFirstResult((int) pageable.getOffset());
         typedQuery.setMaxResults(pageable.getPageSize());
 
-        // Obtener los resultados
         List<User> resultList = typedQuery.getResultList();
 
-        // Crear consulta para contar el total de elementos sin paginación
+        // Consulta de conteo: Root propio y predicados reconstruidos sobre él
         CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
         Root<User> countRoot = countQuery.from(User.class);
+        countQuery.select(cb.count(countRoot))
+                  .where(construirPredicadoPage(cb, countRoot, filters, notEqualFilters));
 
-        // Replicar los joins y predicados en la consulta de conteo
-        Predicate countFinalPredicate = cb.and(
-                !orPredicates.isEmpty() ? cb.or(orPredicates.stream()
-                        .filter(p -> !p.getExpressions().isEmpty())
-                        .map(p -> p.getExpressions().get(0))
-                        .toArray(Predicate[]::new)) : cb.conjunction(),
-                !andPredicates.isEmpty() ? cb.and(andPredicates.stream()
-                        .filter(p -> !p.getExpressions().isEmpty())
-                        .map(p -> p.getExpressions().get(0))
-                        .toArray(Predicate[]::new)) : cb.conjunction(),
-                !notEqualPredicates.isEmpty() ? cb.and(notEqualPredicates.stream()
-                        .filter(p -> !p.getExpressions().isEmpty())
-                        .map(p -> p.getExpressions().get(0))
-                        .toArray(Predicate[]::new)) : cb.conjunction()
-        );
-
-        countQuery.select(cb.count(countRoot)).where(countFinalPredicate);
-
-        //Obtener el total de registros
         Long total = entityManager.createQuery(countQuery).getSingleResult();
 
-        // Crear y devolver el objeto Page
         return new PageImpl<>(resultList, pageable, total);
     }
 

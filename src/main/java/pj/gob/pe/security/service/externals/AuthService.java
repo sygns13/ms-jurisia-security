@@ -2,6 +2,7 @@ package pj.gob.pe.security.service.externals;
 
 import pj.gob.pe.security.model.beans.ResponseLogin;
 import pj.gob.pe.security.model.beans.TokenResponse;
+import pj.gob.pe.security.model.beans.UserLogin;
 import pj.gob.pe.security.utils.beans.LoginInput;
 import pj.gob.pe.security.utils.beans.LogoutInput;
 import pj.gob.pe.security.utils.beans.RefreshTokenInput;
@@ -16,6 +17,8 @@ public interface AuthService {
     public ResponseLogin generateSessionIdRefreshToken(String username, TokenResponse token) throws Exception;
 
     public ResponseLogin sesionData(String userSessionsId) throws Exception;
+
+    public UserLogin validarSesion(String SessionId) throws Exception;
 
     public ResponseLogin verifySession(VerifySessionInput verifySession) throws Exception;
 

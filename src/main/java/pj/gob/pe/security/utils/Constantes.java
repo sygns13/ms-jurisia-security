@@ -33,6 +33,9 @@ public class Constantes {
 
     public static final Long CANTIDAD_UNIDAD_LONG = 1L;
 
+    // Autor de los registros generados por el propio sistema (alta automática de usuarios desde el SIJ)
+    public static final Long USUARIO_SISTEMA_ID = 1L;
+
     public static final Integer TIPO_DOCUMENTO_DNI = 1;
     public static final Integer TIPO_DOCUMENTO_RUC = 2;
     public static final Integer TIPO_DOCUMENTO_CARNET_EXTRANJERIA = 3;
