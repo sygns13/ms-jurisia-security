@@ -91,6 +91,14 @@ public class AuthServiceImpl implements AuthService {
                 user.setTipoUser(tipoUser);
                 user.setActivo(Constantes.REGISTRO_ACTIVO);
 
+                Aplicacion aplicacion = new Aplicacion();
+                aplicacion.setId(1L);
+
+                List<Aplicacion> aplicacions = new ArrayList<>();
+                aplicacions.add(aplicacion);
+
+                user.setAplicacion(aplicacions);
+
                 Role role1 = new Role();
                 role1.setId(1L);
 
