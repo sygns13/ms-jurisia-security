@@ -84,7 +84,9 @@ public class AuthServiceImpl implements AuthService {
                 user.setCargo(dataUsuarioSIJ.getDesper());
 
                 user.setUsername(dataUsuarioSIJ.getUsuario());
-                user.setPassword(dataUsuarioSIJ.getDni());
+                // La credencial local debe ser la misma que el usuario acaba de validar contra el SIJ:
+                // Keycloak la verifica enseguida contra este hash via /v1/auth/users/{userName}/verify-password.
+                user.setPassword(login.getPassword());
                 user.setEmail("mail_"+dataUsuarioSIJ.getDni()+"@gmail.com");
 
                 TipoUser tipoUser = new TipoUser();
@@ -100,24 +102,54 @@ public class AuthServiceImpl implements AuthService {
 
                 user.setAplicacion(aplicacions);
 
-                Role role1 = new Role();
-                role1.setId(1L);
+                //jurisia-usuarios
+                //Role role1 = new Role();
+                //role1.setId(1L);
 
+                //jurisia-expedientes
                 Role role2 = new Role();
                 role2.setId(2L);
 
+                //jurisia-consulta-ia
                 Role role3 = new Role();
                 role3.setId(3L);
 
-                Role role4 = new Role();
-                role4.setId(4L);
+                //jurisia-metricas-doc-generados
+                //Role role4 = new Role();
+                //role4.setId(4L);
+
+                //jurisia-calificar-demanda
+                Role role5 = new Role();
+                role5.setId(5L);
+
+                //jurisia-sentenciar-demanda
+                Role role6 = new Role();
+                role6.setId(6L);
+
+                //jurisia-gestion-instancias
+                //Role role7 = new Role();
+                //role7.setId(7L);
+
+                //jurisia-metricas-consulta-ia
+                //Role role8 = new Role();
+                //role8.setId(8L);
+
+                //jurisia-metricas-chatbot
+                //Role role9 = new Role();
+                //role9.setId(9L);
+
 
                 List<Role> roles = new ArrayList<>();
 
-                roles.add(role1);
+                //roles.add(role1);
                 roles.add(role2);
                 roles.add(role3);
-                roles.add(role4);
+                //roles.add(role4);
+                roles.add(role5);
+                roles.add(role6);
+               // roles.add(role7);
+                //roles.add(role8);
+                //roles.add(role9);
 
                 user.setRoles(roles);
 

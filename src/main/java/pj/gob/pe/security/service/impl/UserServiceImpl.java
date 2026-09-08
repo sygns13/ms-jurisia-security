@@ -40,6 +40,7 @@ public class UserServiceImpl implements UserService {
     private final RoleDAO roleDAO;
     private final AplicacionDAO aplicacionDAO;
 
+    @Transactional(readOnly=false,rollbackFor=Exception.class)
     @Override
     public void altabaja(Long id, Integer valor) throws Exception {
         this.altabaja(id, valor, Constantes.USUARIO_SISTEMA_ID);
@@ -142,6 +143,7 @@ public class UserServiceImpl implements UserService {
         return this.listar(pageable, buscar, null);
     }
 
+    @Transactional(readOnly=false,rollbackFor=Exception.class)
     @Override
     public User registrar(User user) throws Exception {
         return this.registrar(user, Constantes.USUARIO_SISTEMA_ID);
@@ -150,6 +152,8 @@ public class UserServiceImpl implements UserService {
     @Transactional(readOnly=false,rollbackFor=Exception.class)
     @Override
     public User registrar(User user, Long userId) throws Exception {
+
+
         LocalDateTime fechaActualTime = LocalDateTime.now();
         user.setRegDate(fechaActualTime.toLocalDate());
         user.setRegDatetime(fechaActualTime);
@@ -192,8 +196,14 @@ public class UserServiceImpl implements UserService {
             // Los Roles no se persisten por la colección @ManyToMany porque UsersHasRoles
             // lleva auditoría; se apartan y se graban luego por la misma ruta que usan
             // los endpoints de asignación.
-            List<Role> rolesSolicitados = user.getRoles();
-            user.setRoles(null);
+            List<Aplicacion> aplicacions = new ArrayList<>(user.getAplicacion());
+            user.getAplicacion().clear();
+
+
+            List<Role> rolesSolicitados =  new ArrayList<>(user.getRoles());
+            user.getRoles().clear();
+
+
 
             User userRegistrado = this.grabarRegistro(user);
 
@@ -208,6 +218,19 @@ public class UserServiceImpl implements UserService {
                 }
 
                 asignacionDAO.reemplazarRoles(userRegistrado.getId(), roleIds, userId);
+            }
+
+            if(aplicacions != null && !aplicacions.isEmpty()){
+                List<Long> appIds = new ArrayList<>();
+                aplicacions.forEach(app -> {
+                    if(app != null && app.getId() != null) appIds.add(app.getId());
+                });
+
+                for (Long appId : appIds) {
+                    this.validarAplicacion(appId);
+                }
+
+                asignacionDAO.reemplazarAplicaciones(userRegistrado.getId(), appIds);
             }
 
             return userRegistrado;
@@ -373,6 +396,7 @@ public class UserServiceImpl implements UserService {
         return Constantes.CANTIDAD_UNIDAD_INTEGER;
     }
 
+    @Transactional(readOnly=false,rollbackFor=Exception.class)
     @Override
     public void grabarEliminar(Long id) throws Exception {
         this.grabarEliminar(id, Constantes.USUARIO_SISTEMA_ID);
@@ -769,6 +793,18 @@ public class UserServiceImpl implements UserService {
 
         if(rol == null){
             throw new ValidationServiceException("El Rol con ID " + roleId + " no existe");
+        }
+    }
+
+    private void validarApplication(Long appId) throws Exception {
+        if(appId == null){
+            throw new ValidationServiceException("Seleccione la Application");
+        }
+
+        Aplicacion app = aplicacionDAO.listarPorId(appId);
+
+        if(app == null){
+            throw new ValidationServiceException("El Application con ID " + appId + " no existe");
         }
     }
 
