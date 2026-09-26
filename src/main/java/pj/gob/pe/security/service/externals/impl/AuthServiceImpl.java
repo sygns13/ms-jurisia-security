@@ -107,8 +107,8 @@ public class AuthServiceImpl implements AuthService {
                 //role1.setId(1L);
 
                 //jurisia-expedientes
-                Role role2 = new Role();
-                role2.setId(2L);
+                //Role role2 = new Role();
+                //role2.setId(2L);
 
                 //jurisia-consulta-ia
                 Role role3 = new Role();
@@ -119,12 +119,12 @@ public class AuthServiceImpl implements AuthService {
                 //role4.setId(4L);
 
                 //jurisia-calificar-demanda
-                Role role5 = new Role();
-                role5.setId(5L);
+                //Role role5 = new Role();
+                //role5.setId(5L);
 
                 //jurisia-sentenciar-demanda
-                Role role6 = new Role();
-                role6.setId(6L);
+                //Role role6 = new Role();
+                //role6.setId(6L);
 
                 //jurisia-gestion-instancias
                 //Role role7 = new Role();
@@ -142,11 +142,11 @@ public class AuthServiceImpl implements AuthService {
                 List<Role> roles = new ArrayList<>();
 
                 //roles.add(role1);
-                roles.add(role2);
+                //roles.add(role2);
                 roles.add(role3);
                 //roles.add(role4);
-                roles.add(role5);
-                roles.add(role6);
+                //roles.add(role5);
+                //roles.add(role6);
                // roles.add(role7);
                 //roles.add(role8);
                 //roles.add(role9);
